@@ -1,26 +1,194 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   MEPM Building Services Consultants — Global Styles
+   ============================================================ */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #18222E;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+* {
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   SEMANTIC TYPE CLASSES
+   ============================================================ */
+
+.mepm-eyebrow {
+  @apply font-mono font-medium text-xs uppercase tracking-caps text-green-700;
+}
+
+.mepm-display {
+  @apply font-display font-black text-6xl leading-tight tracking-tight;
+}
+
+h1,
+.mepm-h1 {
+  @apply font-display font-black text-4xl leading-tight tracking-tight;
+}
+
+h2,
+.mepm-h2 {
+  @apply font-display font-bold text-3xl leading-snug tracking-tight;
+}
+
+h3,
+.mepm-h3 {
+  @apply font-display font-semibold text-2xl leading-snug;
+}
+
+h4,
+.mepm-h4 {
+  @apply font-body font-semibold text-xl leading-snug;
+}
+
+.mepm-lead {
+  @apply font-body font-normal text-lg leading-normal text-fg-muted;
+}
+
+p,
+.mepm-body {
+  @apply font-body font-normal text-base leading-normal;
+}
+
+.mepm-small {
+  @apply font-body text-sm leading-normal text-fg-muted;
+}
+
+.mepm-caption {
+  @apply font-body text-xs leading-snug text-fg-subtle;
+}
+
+.mepm-mono {
+  @apply font-mono text-sm leading-normal text-fg-muted;
+}
+
+.mepm-spec {
+  @apply font-mono font-medium text-xs uppercase tracking-wide text-slate-500;
+}
+
+/* ============================================================
+   COMPONENT UTILITIES
+   ============================================================ */
+
+@layer components {
+  /* Button base */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-md font-body font-medium text-base transition-all duration-standard ease-standard;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  /* Button primary (navy) */
+  .btn-primary {
+    @apply bg-navy-700 text-white hover:bg-navy-800 hover:shadow-lg hover:translate-y-[-1px];
+    @apply focus:ring-navy-300;
+  }
+
+  /* Button secondary (green) */
+  .btn-secondary {
+    @apply bg-green-500 text-white hover:bg-green-600 hover:shadow-lg hover:translate-y-[-1px];
+    @apply focus:ring-green-200;
+  }
+
+  /* Button ghost */
+  .btn-ghost {
+    @apply border border-slate-200 text-navy-700 hover:bg-navy-50 hover:shadow-sm;
+    @apply focus:ring-navy-300;
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white border border-slate-200 rounded-lg p-6 shadow-sm transition-all duration-standard ease-standard;
+  }
+
+  .card:hover {
+    @apply shadow-lg translate-y-[-4px];
+  }
+
+  /* Card with top rule */
+  .card-accent {
+    @apply card border-t-[5px] border-t-green-500;
+  }
+
+  /* Input base */
+  .input {
+    @apply w-full px-4 py-3 rounded-md border border-slate-200 font-body text-base;
+    @apply focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-navy-600;
+    @apply placeholder:text-fg-muted;
+  }
+
+  /* Select base */
+  .select {
+    @apply input appearance-none cursor-pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230A5491' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    padding-right: 2.5rem;
+  }
+
+  /* Link base */
+  a {
+    @apply text-link hover:underline transition-colors duration-standard ease-standard;
+  }
+
+  /* Grid utilities */
+  .bp-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+  }
+
+  /* Marquee utilities */
+  .marquee-track {
+    @apply flex w-max;
+  }
+
+  /* Status dot animation */
+  .pulse-dot {
+    @apply animate-pulse;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   REDUCED MOTION SUPPORT
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+
+::selection {
+  background: #C9E7B5;
+  color: #004078;
+}
+
+::-webkit-tap-highlight-color {
+  transparent;
 }
