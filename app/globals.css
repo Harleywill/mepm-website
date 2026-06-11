@@ -1,9 +1,98 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* ============================================================
-   MEPM Building Services Consultants — Global Styles
+   MEPM Building Services Consultants — Design Tokens
+   Tailwind CSS v4: tokens are defined here in @theme,
+   NOT in tailwind.config.ts (v4 ignores the JS config).
+   ============================================================ */
+
+/* Fonts come from next/font (see layout.tsx) — map the CSS
+   variables it injects onto Tailwind font utilities. */
+@theme inline {
+  --font-display: var(--font-archivo);
+  --font-body: var(--font-ibm-plex-sans);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+@theme {
+  /* ---------- BRAND CORE ---------- */
+  --color-mepm-navy: #004078;
+  --color-mepm-green: #68B830;
+
+  /* ---------- NAVY SCALE (primary) ---------- */
+  --color-navy-950: #001A33;
+  --color-navy-900: #002850;
+  --color-navy-800: #013463;
+  --color-navy-700: #004078;
+  --color-navy-600: #0A5491;
+  --color-navy-500: #1E6CAD;
+  --color-navy-400: #4A8DC4;
+  --color-navy-300: #84B2D9;
+  --color-navy-200: #B9D3E9;
+  --color-navy-100: #DCE9F3;
+  --color-navy-50: #EEF4FA;
+
+  /* ---------- GREEN SCALE (accent, overrides default) ---------- */
+  --color-green-900: #2E5614;
+  --color-green-800: #3E7A1C;
+  --color-green-700: #4F9A25;
+  --color-green-600: #5AAA2B;
+  --color-green-500: #68B830;
+  --color-green-400: #84C857;
+  --color-green-300: #A6D885;
+  --color-green-200: #C9E7B5;
+  --color-green-100: #E4F2D8;
+  --color-green-50: #F2F8EB;
+
+  /* ---------- SLATE SCALE (cool neutrals, overrides default) ---------- */
+  --color-slate-950: #0E1620;
+  --color-slate-900: #18222E;
+  --color-slate-800: #27323F;
+  --color-slate-700: #3A4654;
+  --color-slate-600: #54616E;
+  --color-slate-500: #717E8A;
+  --color-slate-400: #95A0AB;
+  --color-slate-300: #BFC7CF;
+  --color-slate-200: #DDE2E7;
+  --color-slate-100: #EDF0F3;
+  --color-slate-50: #F6F8FA;
+
+  /* ---------- SUPPORT / SEMANTIC ---------- */
+  --color-steel: #3D8FCB;
+  --color-success: #4F9A25;
+  --color-warning: #E0941A;
+  --color-danger: #D14343;
+
+  /* ---------- TRACKING ---------- */
+  --tracking-caps: 0.12em;
+
+  /* ---------- MOTION ---------- */
+  --ease-standard: cubic-bezier(0.2, 0, 0.1, 1);
+
+  /* ---------- SHADOWS (navy-tinted, never black) ---------- */
+  --shadow-xs: 0 1px 2px rgba(0, 40, 80, 0.06);
+  --shadow-sm: 0 1px 3px rgba(0, 40, 80, 0.08), 0 1px 2px rgba(0, 40, 80, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 40, 80, 0.10), 0 2px 4px rgba(0, 40, 80, 0.06);
+  --shadow-lg: 0 12px 28px rgba(0, 40, 80, 0.14), 0 4px 8px rgba(0, 40, 80, 0.06);
+  --shadow-xl: 0 24px 48px rgba(0, 40, 80, 0.18);
+
+  /* ---------- ANIMATIONS ---------- */
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-pulse-dot: pulse-dot 1.8s ease-in-out infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+}
+
+/* ============================================================
+   BASE
    ============================================================ */
 
 :root {
@@ -15,38 +104,35 @@ body {
   margin: 0;
   padding: 0;
   background: #ffffff;
-  color: #18222E;
-}
-
-* {
-  box-sizing: border-box;
+  color: #18222e;
 }
 
 /* ============================================================
    SEMANTIC TYPE CLASSES
+   (font families reference the next/font variables)
    ============================================================ */
 
 .mepm-eyebrow {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
   font-weight: 500;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #4F9A25;
+  color: #4f9a25;
 }
 
 .mepm-display {
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: var(--font-archivo), system-ui, sans-serif;
   font-weight: 900;
-  font-size: 5rem;
+  font-size: clamp(3rem, 6vw, 5rem);
   line-height: 1.08;
   letter-spacing: -0.02em;
 }
 
 h1,
 .mepm-h1 {
-  font-family: 'Archivo', system-ui, sans-serif;
-  font-weight: 900;
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-weight: 800;
   font-size: 3rem;
   line-height: 1.08;
   letter-spacing: -0.02em;
@@ -54,7 +140,7 @@ h1,
 
 h2,
 .mepm-h2 {
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: var(--font-archivo), system-ui, sans-serif;
   font-weight: 700;
   font-size: 2.25rem;
   line-height: 1.12;
@@ -63,7 +149,7 @@ h2,
 
 h3,
 .mepm-h3 {
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: var(--font-archivo), system-ui, sans-serif;
   font-weight: 600;
   font-size: 1.75rem;
   line-height: 1.18;
@@ -71,59 +157,62 @@ h3,
 
 h4,
 .mepm-h4 {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
   font-weight: 600;
   font-size: 1.375rem;
   line-height: 1.25;
 }
 
 .mepm-lead {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
   font-weight: 400;
   font-size: 1.125rem;
   line-height: 1.55;
-  color: #54616E;
+  color: #54616e;
 }
 
 p,
 .mepm-body {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
   font-weight: 400;
   font-size: 1rem;
   line-height: 1.55;
 }
 
 .mepm-small {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
   font-size: 0.875rem;
   line-height: 1.55;
-  color: #54616E;
+  color: #54616e;
 }
 
 .mepm-caption {
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
   font-size: 0.75rem;
   line-height: 1.25;
-  color: #95A0AB;
+  color: #95a0ab;
 }
 
 .mepm-mono {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
   font-size: 0.875rem;
   line-height: 1.55;
-  color: #54616E;
+  color: #54616e;
 }
 
 .mepm-spec {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
   font-weight: 500;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  color: #717E8A;
+  color: #717e8a;
 }
 
-/* Grid utilities */
+/* ============================================================
+   BLUEPRINT GRID (engineering motif for dark sections)
+   ============================================================ */
+
 .bp-grid {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
@@ -134,7 +223,7 @@ p,
 }
 
 /* ============================================================
-   REDUCED MOTION SUPPORT
+   REDUCED MOTION
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -152,7 +241,7 @@ p,
    ============================================================ */
 
 ::selection {
-  background: #C9E7B5;
+  background: #c9e7b5;
   color: #004078;
 }
 

@@ -16,7 +16,7 @@ export default function Button({
   className,
   ...props
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center justify-center gap-2 font-body font-medium transition-all duration-standard ease-standard focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center gap-2 font-body font-medium transition-all duration-200 ease-standard focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variants = {
     primary: 'bg-navy-700 text-white hover:bg-navy-800 hover:shadow-lg hover:translate-y-[-1px] focus:ring-navy-300',

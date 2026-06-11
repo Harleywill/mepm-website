@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./globals.css";
 import { Header, Footer } from "./components/layout";
 
 const archivo = Archivo({
-  variable: "--font-display",
+  variable: "--font-archivo",
   subsets: ["latin"],
   weight: ["500", "600", "700", "800", "900"],
 });
 
 const ibmPlexSans = IBM_Plex_Sans({
-  variable: "--font-body",
+  variable: "--font-ibm-plex-sans",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-mono",
+  variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });

@@ -39,9 +39,10 @@ const footerSections = [
 ];
 
 const socialLinks = [
-  { label: 'LinkedIn', href: '#', icon: '🔗' },
-  { label: 'Twitter', href: '#', icon: '𝕏' },
-  { label: 'Email', href: '#', icon: '✉' },
+  { label: 'LinkedIn', href: '#', icon: 'fab fa-linkedin-in' },
+  { label: 'Twitter', href: '#', icon: 'fab fa-twitter' },
+  { label: 'Instagram', href: '#', icon: 'fab fa-instagram' },
+  { label: 'Facebook', href: '#', icon: 'fab fa-facebook-f' },
 ];
 
 export default function Footer() {
@@ -70,9 +71,9 @@ export default function Footer() {
                 key={label}
                 href={href}
                 aria-label={label}
-                className="w-10 h-10 rounded-sm border border-white/18 flex items-center justify-center text-white/80 hover:bg-white/12 transition-colors text-lg"
+                className="w-10 h-10 rounded-sm border border-white/18 flex items-center justify-center text-white/80 hover:bg-white/12 transition-colors"
               >
-                {icon}
+                <i className={`${icon} text-base`} />
               </Link>
             ))}
           </div>
