@@ -152,8 +152,8 @@ export default function Header({ activeSection = 'Home', onNavClick }: HeaderPro
                     onClick={() => handleNavClick(link.label, link.id)}
                     className={`w-full text-left px-4 py-3 rounded-md font-body font-medium text-sm transition-colors ${
                       isActive
-                        ? 'bg-navy-50 text-navy-700'
-                        : 'text-slate-700 hover:bg-navy-50'
+                        ? 'bg-navy-700/20 backdrop-blur-sm text-navy-700'
+                        : 'text-slate-700 hover:bg-navy-50/40'
                     }`}
                   >
                     {link.label}
