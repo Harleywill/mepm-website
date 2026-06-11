@@ -9,7 +9,11 @@ interface IconProps {
 }
 
 export default function Icon({ name, size = 24, className }: IconProps) {
-  const LucideIcon = Icons[name] as React.ComponentType<{ size: number; className?: string }>;
+  const LucideIcon = Icons[name] as React.ComponentType<{
+    size: number;
+    className?: string;
+    strokeWidth?: number;
+  }>;
 
   if (!LucideIcon) {
     console.warn(`Icon "${name}" not found in Lucide`);

@@ -1,48 +1,20 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
+import { services } from '@/lib/services';
 
 const LOGO_REVERSED = '/assets/mepm-logo-reversed-tight.png';
-
-const footerSections = [
-  {
-    title: 'SERVICES',
-    links: [
-      'Electrical engineering',
-      'Mechanical engineering',
-      'Environmental consultancy',
-      'Energy & net zero',
-      'BIM & coordination',
-    ],
-  },
-  {
-    title: 'COMPANY',
-    links: [
-      'About MEPM',
-      'Our approach',
-      'Projects',
-      'Careers',
-      'Contact',
-    ],
-  },
-  {
-    title: 'SECTORS',
-    links: [
-      'Commercial',
-      'Education',
-      'Healthcare',
-      'Residential',
-      'Industrial',
-    ],
-  },
-];
 
 const socialLinks = [
   { label: 'LinkedIn', href: '#', icon: 'fab fa-linkedin-in' },
   { label: 'Twitter', href: '#', icon: 'fab fa-twitter' },
   { label: 'Instagram', href: '#', icon: 'fab fa-instagram' },
   { label: 'Facebook', href: '#', icon: 'fab fa-facebook-f' },
+];
+
+const companyLinks = [
+  { label: 'Home', href: '/' },
+  { label: 'All services', href: '/services' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 export default function Footer() {
@@ -79,33 +51,82 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Footer Sections */}
-        {footerSections.map((section) => (
-          <div key={section.title}>
-            <div className="font-mono text-xs uppercase tracking-caps text-green-400 mb-4">
-              {section.title}
-            </div>
-            <ul className="space-y-3">
-              {section.links.map((link) => (
-                <li key={link}>
-                  <Link
-                    href="#"
-                    className="text-sm text-white/72 hover:text-white/90 transition-colors"
-                  >
-                    {link}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+        {/* Services */}
+        <div>
+          <div className="font-mono text-xs uppercase tracking-caps text-green-400 mb-4">
+            SERVICES
           </div>
-        ))}
+          <ul className="space-y-3">
+            {services.map((service) => (
+              <li key={service.slug}>
+                <Link
+                  href={`/services/${service.slug}`}
+                  className="text-sm text-white/72 hover:text-white/90 transition-colors"
+                >
+                  {service.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Company */}
+        <div>
+          <div className="font-mono text-xs uppercase tracking-caps text-green-400 mb-4">
+            COMPANY
+          </div>
+          <ul className="space-y-3">
+            {companyLinks.map(({ label, href }) => (
+              <li key={label}>
+                <Link
+                  href={href}
+                  className="text-sm text-white/72 hover:text-white/90 transition-colors"
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Contact */}
+        <div>
+          <div className="font-mono text-xs uppercase tracking-caps text-green-400 mb-4">
+            CONTACT
+          </div>
+          <ul className="space-y-3 text-sm">
+            <li>
+              <a
+                href="tel:+441482838080"
+                className="text-white/72 hover:text-white/90 transition-colors"
+              >
+                01482 838080
+              </a>
+            </li>
+            <li>
+              <a
+                href="mailto:info@mepmservices.co.uk"
+                className="text-white/72 hover:text-white/90 transition-colors"
+              >
+                info@mepmservices.co.uk
+              </a>
+            </li>
+            <li className="text-white/62 leading-relaxed">
+              Unit F2 Rotterdam Park
+              <br />
+              Hull, HU7 0AN
+              <br />
+              East Riding of Yorkshire
+            </li>
+          </ul>
+        </div>
       </div>
 
       {/* Footer Bottom */}
       <div className="border-t border-white/12">
         <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50 font-mono">
           <span>© 2026 MEPM Building Services Consultants Ltd</span>
-          <span>Company No. 00000000 · Registered in England & Wales</span>
+          <span>Registered in England & Wales</span>
         </div>
       </div>
     </footer>

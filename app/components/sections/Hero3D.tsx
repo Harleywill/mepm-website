@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import * as THREE from 'three';
 import { motion, useReducedMotion } from 'framer-motion';
 
@@ -201,12 +202,18 @@ export default function Hero3D() {
             tailored to your project.
           </p>
           <div className="flex gap-4 flex-wrap">
-            <button className="inline-flex items-center justify-center px-6 py-3 rounded-md font-semibold text-base bg-mepm-green text-white shadow-sm hover:bg-mepm-green/90 transition-colors duration-200">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-md font-semibold text-base bg-mepm-green text-white shadow-sm hover:bg-mepm-green/90 transition-colors duration-200"
+            >
               Get a quote
-            </button>
-            <button className="inline-flex items-center justify-center px-6 py-3 rounded-md font-medium text-base border border-navy-700/25 text-navy-700 hover:border-navy-700 hover:bg-navy-700 hover:text-white transition-colors duration-200">
-              View our work
-            </button>
+            </Link>
+            <Link
+              href="/services"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-md font-medium text-base border border-navy-700/25 text-navy-700 hover:border-navy-700 hover:bg-navy-700 hover:text-white transition-colors duration-200"
+            >
+              Explore our services
+            </Link>
           </div>
         </div>
       </motion.div>

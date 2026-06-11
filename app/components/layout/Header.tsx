@@ -1,75 +1,75 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '../ui';
+import { services } from '@/lib/services';
 
 const LOGO = '/assets/mepm-logo-tight.png';
-const LOGO_REVERSED = '/assets/mepm-logo-reversed-tight.png';
-
-interface HeaderProps {
-  activeSection?: string;
-  onNavClick?: (section: string) => void;
-}
 
 const navLinks = [
-  { label: 'Home', id: 'top' },
-  { label: 'Services', id: 'services' },
-  { label: 'Projects', id: 'projects' },
-  { label: 'About', id: 'stats' },
-  { label: 'Contact', id: 'contact' },
+  { label: 'Home', href: '/' },
+  { label: 'Services', href: '/services', children: services },
+  { label: 'Contact', href: '/contact' },
 ];
 
-export default function Header({ activeSection = 'Home', onNavClick }: HeaderProps) {
+export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const router = useRouter();
 
-  // Track scroll for subtle shadow effect
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (section: string, id: string) => {
+  // Close menus on navigation
+  useEffect(() => {
     setMobileOpen(false);
-    onNavClick?.(section);
+    setServicesOpen(false);
+  }, [pathname]);
 
-    // Smooth scroll to section
-    const element = document.getElementById(id);
-    if (element) {
-      const y = element.getBoundingClientRect().top + window.pageYOffset - 76;
-      window.scrollTo({ top: id === 'top' ? 0 : y, behavior: 'smooth' });
-    }
-  };
+  // Close dropdown on click outside or Escape
+  useEffect(() => {
+    if (!servicesOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (!dropdownRef.current?.contains(e.target as Node)) setServicesOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setServicesOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [servicesOpen]);
+
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   return (
     <>
       {/* Sticky Header */}
-      <motion.header
+      <header
         className={`sticky top-0 z-50 transition-all duration-200 ease-standard ${
           isScrolled
             ? 'bg-white/30 backdrop-blur-md border-b border-slate-200 shadow-sm'
             : 'bg-white'
         }`}
-        initial={{ y: 0 }}
-        animate={{ y: 0 }}
       >
         <div className="max-w-7xl mx-auto px-6 h-19 flex items-center justify-between">
           {/* Logo */}
-          <Link
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              handleNavClick('Home', 'top');
-            }}
-            className="flex-shrink-0"
-          >
+          <Link href="/" className="flex-shrink-0" aria-label="MEPM home">
             <Image
               src={LOGO}
               alt="MEPM"
@@ -83,39 +83,96 @@ export default function Header({ activeSection = 'Home', onNavClick }: HeaderPro
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.label;
+              const active = isActive(link.href);
+              const linkClasses = `relative px-3.5 py-2 font-body font-medium text-sm transition-colors duration-200 ease-standard ${
+                active ? 'text-navy-700' : 'text-slate-700 hover:text-navy-700'
+              }`;
+
+              if (link.children) {
+                return (
+                  <div
+                    key={link.label}
+                    ref={dropdownRef}
+                    className="relative"
+                    onMouseEnter={() => setServicesOpen(true)}
+                    onMouseLeave={() => setServicesOpen(false)}
+                  >
+                    <button
+                      onClick={() => setServicesOpen(!servicesOpen)}
+                      aria-expanded={servicesOpen}
+                      aria-haspopup="true"
+                      className={`${linkClasses} inline-flex items-center gap-1`}
+                    >
+                      {link.label}
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform duration-200 ${
+                          servicesOpen ? 'rotate-180' : ''
+                        }`}
+                      />
+                      {active && <NavUnderline />}
+                    </button>
+
+                    <AnimatePresence>
+                      {servicesOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 6 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute top-full left-0 pt-2 w-72"
+                        >
+                          <div className="bg-white/80 backdrop-blur-md border border-slate-200 rounded-lg shadow-lg overflow-hidden p-2">
+                            {link.children.map((service) => (
+                              <Link
+                                key={service.slug}
+                                href={`/services/${service.slug}`}
+                                className={`block px-4 py-3 rounded-md transition-colors ${
+                                  pathname === `/services/${service.slug}`
+                                    ? 'bg-navy-700/10 text-navy-700'
+                                    : 'hover:bg-navy-50/60'
+                                }`}
+                              >
+                                <span className="block font-body font-medium text-sm text-navy-700">
+                                  {service.name}
+                                </span>
+                                <span className="block mt-0.5 text-xs text-slate-600 leading-snug">
+                                  {service.shortDescription}
+                                </span>
+                              </Link>
+                            ))}
+                            <div className="border-t border-slate-200 mt-2 pt-2">
+                              <Link
+                                href="/services"
+                                className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-navy-700 hover:text-green-600 transition-colors"
+                              >
+                                All services
+                                <ArrowRight size={14} />
+                              </Link>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+
               return (
-                <button
-                  key={link.label}
-                  onClick={() => handleNavClick(link.label, link.id)}
-                  className={`relative px-3.5 py-2 font-body font-medium text-sm transition-colors duration-200 ease-standard ${
-                    isActive ? 'text-navy-700' : 'text-slate-700 hover:text-navy-700'
-                  }`}
-                >
+                <Link key={link.label} href={link.href} className={linkClasses}>
                   {link.label}
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-underline"
-                      className="absolute bottom-1.5 left-3.5 right-3.5 h-0.5 bg-mepm-green"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      exit={{ scaleX: 0 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                </button>
+                  {active && <NavUnderline />}
+                </Link>
               );
             })}
 
-            {/* Spacer */}
             <div className="w-3.5" />
 
-            {/* Get Quote Button */}
             <Button
               variant="glass"
               size="md"
               icon={<ArrowRight size={18} />}
-              onClick={() => handleNavClick('Contact', 'contact')}
+              onClick={() => router.push('/contact')}
               className="font-semibold"
             >
               Get a quote
@@ -127,11 +184,12 @@ export default function Header({ activeSection = 'Home', onNavClick }: HeaderPro
             onClick={() => setMobileOpen(!mobileOpen)}
             className="md:hidden p-2 text-navy-700 hover:bg-navy-50 rounded-md transition-colors"
             aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-      </motion.header>
+      </header>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -141,32 +199,29 @@ export default function Header({ activeSection = 'Home', onNavClick }: HeaderPro
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden fixed top-19 left-0 right-0 bg-white/50 backdrop-blur-md border-b border-slate-200 z-40"
+            className="md:hidden fixed top-19 left-0 right-0 bg-white/85 backdrop-blur-lg border-b border-slate-200 z-40"
           >
-            <div className="p-4 space-y-2">
-              {navLinks.map((link) => {
-                const isActive = activeSection === link.label;
-                return (
-                  <button
-                    key={link.label}
-                    onClick={() => handleNavClick(link.label, link.id)}
-                    className={`w-full text-left px-4 py-3 rounded-md font-body font-medium text-sm transition-colors ${
-                      isActive
-                        ? 'bg-navy-700/20 backdrop-blur-sm text-navy-700'
-                        : 'text-slate-700 hover:bg-navy-50/40'
-                    }`}
-                  >
-                    {link.label}
-                  </button>
-                );
-              })}
+            <div className="p-4 space-y-1">
+              <MobileLink href="/" label="Home" pathname={pathname} />
+              <MobileLink href="/services" label="Services" pathname={pathname} />
+              <div className="pl-4 space-y-1">
+                {services.map((service) => (
+                  <MobileLink
+                    key={service.slug}
+                    href={`/services/${service.slug}`}
+                    label={service.name}
+                    pathname={pathname}
+                    sub
+                  />
+                ))}
+              </div>
+              <MobileLink href="/contact" label="Contact" pathname={pathname} />
 
-              {/* Mobile CTA Button */}
               <Button
                 variant="glass"
                 size="md"
                 icon={<ArrowRight size={18} />}
-                onClick={() => handleNavClick('Contact', 'contact')}
+                onClick={() => router.push('/contact')}
                 className="w-full mt-4"
               >
                 Get a quote
@@ -176,5 +231,43 @@ export default function Header({ activeSection = 'Home', onNavClick }: HeaderPro
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function NavUnderline() {
+  return (
+    <motion.span
+      layoutId="nav-underline"
+      className="absolute bottom-1.5 left-3.5 right-3.5 h-0.5 bg-mepm-green"
+      transition={{ duration: 0.3 }}
+    />
+  );
+}
+
+function MobileLink({
+  href,
+  label,
+  pathname,
+  sub = false,
+}: {
+  href: string;
+  label: string;
+  pathname: string;
+  sub?: boolean;
+}) {
+  const active = pathname === href;
+  return (
+    <Link
+      href={href}
+      className={`block w-full px-4 py-3 rounded-md font-body font-medium transition-colors ${
+        sub ? 'text-sm' : 'text-sm'
+      } ${
+        active
+          ? 'bg-navy-700/20 backdrop-blur-sm text-navy-700'
+          : 'text-slate-700 hover:bg-navy-50/40'
+      }`}
+    >
+      {label}
+    </Link>
   );
 }
