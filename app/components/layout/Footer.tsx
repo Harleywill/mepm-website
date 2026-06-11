@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Linkedin, Twitter, Mail } from 'lucide-react';
 
 const LOGO_REVERSED = '/assets/mepm-logo-reversed-tight.png';
 
@@ -40,9 +39,9 @@ const footerSections = [
 ];
 
 const socialLinks = [
-  { icon: Linkedin, label: 'LinkedIn', href: '#' },
-  { icon: Twitter, label: 'Twitter', href: '#' },
-  { icon: Mail, label: 'Email', href: '#' },
+  { label: 'LinkedIn', href: '#', icon: '🔗' },
+  { label: 'Twitter', href: '#', icon: '𝕏' },
+  { label: 'Email', href: '#', icon: '✉' },
 ];
 
 export default function Footer() {
@@ -65,14 +64,14 @@ export default function Footer() {
 
           {/* Social Links */}
           <div className="flex gap-3 mt-5">
-            {socialLinks.map(({ icon: Icon, label, href }) => (
+            {socialLinks.map(({ label, href, icon }) => (
               <Link
                 key={label}
                 href={href}
                 aria-label={label}
-                className="w-9.5 h-9.5 rounded-sm border border-white/18 flex items-center justify-center text-white/80 hover:bg-white/12 transition-colors"
+                className="w-10 h-10 rounded-sm border border-white/18 flex items-center justify-center text-white/80 hover:bg-white/12 transition-colors text-lg"
               >
-                <Icon size={17} />
+                {icon}
               </Link>
             ))}
           </div>
