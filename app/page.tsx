@@ -20,14 +20,14 @@ export default function Home() {
             Multi-disciplinary electrical, mechanical and environmental engineering — innovative design and efficient, sustainable systems tailored to your project.
           </p>
           <div className="flex gap-4 justify-center">
-            <button className="btn btn-primary">Get a quote</button>
-            <button className="btn btn-ghost">View our work</button>
+            <button className="inline-flex items-center justify-center px-6 py-3 rounded-md font-medium text-base bg-navy-700 text-white hover:bg-navy-800 transition-all duration-standard">Get a quote</button>
+            <button className="inline-flex items-center justify-center px-6 py-3 rounded-md font-medium text-base border border-slate-200 text-navy-700 hover:bg-navy-50 transition-all duration-standard">View our work</button>
           </div>
         </div>
       </section>
 
       {/* Services Section Placeholder */}
-      <section id="services" className="py-24 bg-bg-subtle">
+      <section id="services" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="mepm-eyebrow mb-4">WHAT WE DO</div>
@@ -38,9 +38,9 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {['Electrical Engineering', 'Mechanical Engineering', 'Environmental Consultancy', 'Energy & Net Zero', 'BIM & Coordination', 'Commissioning'].map((service) => (
-              <div key={service} className="card-accent p-8">
+              <div key={service} className="bg-white border border-t-4 border-t-green-500 border-slate-200 rounded-lg p-8 shadow-sm hover:shadow-lg hover:translate-y-[-4px] transition-all duration-standard">
                 <h3 className="mepm-h4 mb-3">{service}</h3>
-                <p className="mepm-body text-fg-muted">Professional engineering services tailored to your project requirements.</p>
+                <p className="mepm-body text-slate-600">Professional engineering services tailored to your project requirements.</p>
               </div>
             ))}
           </div>
@@ -59,12 +59,12 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {['Project One', 'Project Two', 'Project Three'].map((project) => (
-              <div key={project} className="card">
+              <div key={project} className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm hover:shadow-lg hover:translate-y-[-4px] transition-all duration-standard">
                 <div className="bg-slate-100 h-48 rounded-md mb-4 flex items-center justify-center">
                   <span className="text-slate-400">Project image</span>
                 </div>
                 <h3 className="mepm-h4 mb-2">{project}</h3>
-                <p className="mepm-small">Brief project description and key achievements.</p>
+                <p className="text-sm text-slate-600">Brief project description and key achievements.</p>
               </div>
             ))}
           </div>
@@ -91,7 +91,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section Placeholder */}
-      <section id="contact" className="py-24 bg-bg-subtle">
+      <section id="contact" className="py-24 bg-slate-50">
         <div className="max-w-2xl mx-auto px-6">
           <div className="text-center mb-12">
             <div className="mepm-eyebrow mb-4">GET IN TOUCH</div>
@@ -100,25 +100,25 @@ export default function Home() {
               Tell us about your next project and let's talk about how we can help.
             </p>
           </div>
-          <form className="card-accent p-8 space-y-6">
+          <form className="bg-white border border-t-4 border-t-green-500 border-slate-200 rounded-lg p-8 shadow-sm space-y-6">
             <div>
               <label className="block mepm-body font-medium mb-2">Name</label>
-              <input type="text" className="input" placeholder="Your name" />
+              <input type="text" className="w-full px-4 py-3 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-navy-600" placeholder="Your name" />
             </div>
             <div>
               <label className="block mepm-body font-medium mb-2">Email</label>
-              <input type="email" className="input" placeholder="you@example.com" />
+              <input type="email" className="w-full px-4 py-3 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-navy-300 focus:border-navy-600" placeholder="you@example.com" />
             </div>
             <div>
               <label className="block mepm-body font-medium mb-2">Project type</label>
-              <select className="select">
+              <select className="w-full px-4 py-3 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-navy-300 appearance-none cursor-pointer" style={{backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230A5491' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`, backgroundPosition: 'right 1rem center', backgroundRepeat: 'no-repeat', paddingRight: '2.5rem'}}>
                 <option>Select a service</option>
                 <option>Electrical Engineering</option>
                 <option>Mechanical Engineering</option>
                 <option>Environmental Consultancy</option>
               </select>
             </div>
-            <button type="submit" className="btn btn-primary w-full">
+            <button type="submit" className="w-full inline-flex items-center justify-center px-6 py-3 rounded-md font-medium text-base bg-navy-700 text-white hover:bg-navy-800 transition-all duration-standard">
               Send enquiry
             </button>
           </form>
