@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Linkedin, Twitter, Instagram } from 'lucide-react';
+import { Linkedin, Twitter, Mail } from 'lucide-react';
 
 const LOGO_REVERSED = '/assets/mepm-logo-reversed-tight.png';
 
@@ -42,7 +42,7 @@ const footerSections = [
 const socialLinks = [
   { icon: Linkedin, label: 'LinkedIn', href: '#' },
   { icon: Twitter, label: 'Twitter', href: '#' },
-  { icon: Instagram, label: 'Instagram', href: '#' },
+  { icon: Mail, label: 'Email', href: '#' },
 ];
 
 export default function Footer() {
