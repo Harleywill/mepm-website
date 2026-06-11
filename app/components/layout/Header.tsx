@@ -141,7 +141,7 @@ export default function Header({ activeSection = 'Home', onNavClick }: HeaderPro
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden fixed top-19 left-0 right-0 bg-white border-b border-slate-200 z-40"
+            className="md:hidden fixed top-19 left-0 right-0 bg-white/92 backdrop-blur-md border-b border-slate-200 z-40"
           >
             <div className="p-4 space-y-2">
               {navLinks.map((link) => {
