@@ -1,65 +1,129 @@
-import Image from "next/image";
-
 export default function Home() {
+  const sections = [
+    { id: 'top', name: 'Home', color: 'bg-blue-50' },
+    { id: 'services', name: 'Services', color: 'bg-green-50' },
+    { id: 'projects', name: 'Projects', color: 'bg-indigo-50' },
+    { id: 'stats', name: 'About / Stats', color: 'bg-purple-50' },
+    { id: 'contact', name: 'Contact', color: 'bg-amber-50' },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <>
+      {/* Hero Section Placeholder */}
+      <section id="top" className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy-50 to-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="mepm-eyebrow mb-6">BUILDING SERVICES CONSULTANTS</div>
+          <h1 className="mepm-display mb-6 text-navy-700">
+            Engineering buildings that <span className="text-mepm-green">perform</span>.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mepm-lead mb-12 max-w-2xl mx-auto">
+            Multi-disciplinary electrical, mechanical and environmental engineering — innovative design and efficient, sustainable systems tailored to your project.
           </p>
+          <div className="flex gap-4 justify-center">
+            <button className="btn btn-primary">Get a quote</button>
+            <button className="btn btn-ghost">View our work</button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Services Section Placeholder */}
+      <section id="services" className="py-24 bg-bg-subtle">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="mepm-eyebrow mb-4">WHAT WE DO</div>
+            <h2 className="mepm-h2 mb-6">Our core disciplines</h2>
+            <p className="mepm-lead max-w-2xl mx-auto">
+              Electrical, mechanical and environmental engineering services for projects of every scale.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {['Electrical Engineering', 'Mechanical Engineering', 'Environmental Consultancy', 'Energy & Net Zero', 'BIM & Coordination', 'Commissioning'].map((service) => (
+              <div key={service} className="card-accent p-8">
+                <h3 className="mepm-h4 mb-3">{service}</h3>
+                <p className="mepm-body text-fg-muted">Professional engineering services tailored to your project requirements.</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Projects Section Placeholder */}
+      <section id="projects" className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="mepm-eyebrow mb-4">SELECTED WORK</div>
+            <h2 className="mepm-h2 mb-6">Case studies & projects</h2>
+            <p className="mepm-lead max-w-2xl mx-auto">
+              Delivering innovative engineering solutions across commercial, residential and institutional sectors.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {['Project One', 'Project Two', 'Project Three'].map((project) => (
+              <div key={project} className="card">
+                <div className="bg-slate-100 h-48 rounded-md mb-4 flex items-center justify-center">
+                  <span className="text-slate-400">Project image</span>
+                </div>
+                <h3 className="mepm-h4 mb-2">{project}</h3>
+                <p className="mepm-small">Brief project description and key achievements.</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section Placeholder */}
+      <section id="stats" className="py-24 bg-navy-700 text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { label: 'Years in business', value: '15+' },
+              { label: 'Projects completed', value: '200+' },
+              { label: 'Team members', value: '45' },
+              { label: 'Carbon saved', value: '50kt CO₂e' },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-5xl font-bold mb-2">{stat.value}</div>
+                <div className="mepm-spec text-white/72">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section Placeholder */}
+      <section id="contact" className="py-24 bg-bg-subtle">
+        <div className="max-w-2xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <div className="mepm-eyebrow mb-4">GET IN TOUCH</div>
+            <h2 className="mepm-h2 mb-6">Start a project</h2>
+            <p className="mepm-lead">
+              Tell us about your next project and let's talk about how we can help.
+            </p>
+          </div>
+          <form className="card-accent p-8 space-y-6">
+            <div>
+              <label className="block mepm-body font-medium mb-2">Name</label>
+              <input type="text" className="input" placeholder="Your name" />
+            </div>
+            <div>
+              <label className="block mepm-body font-medium mb-2">Email</label>
+              <input type="email" className="input" placeholder="you@example.com" />
+            </div>
+            <div>
+              <label className="block mepm-body font-medium mb-2">Project type</label>
+              <select className="select">
+                <option>Select a service</option>
+                <option>Electrical Engineering</option>
+                <option>Mechanical Engineering</option>
+                <option>Environmental Consultancy</option>
+              </select>
+            </div>
+            <button type="submit" className="btn btn-primary w-full">
+              Send enquiry
+            </button>
+          </form>
+        </div>
+      </section>
+    </>
   );
 }

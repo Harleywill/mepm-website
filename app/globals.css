@@ -189,6 +189,6 @@ p,
   color: #004078;
 }
 
-::-webkit-tap-highlight-color {
-  transparent;
+a {
+  -webkit-tap-highlight-color: transparent;
 }
