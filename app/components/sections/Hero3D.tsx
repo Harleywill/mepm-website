@@ -27,31 +27,33 @@ export default function Hero3D() {
     camera.position.z = 3;
 
     // Create rotating icosahedron (engineering geometry)
-    const geometry = new THREE.IcosahedronGeometry(1.2, 4);
-    const material = new THREE.MeshPhongMaterial({
+    const geometry = new THREE.IcosahedronGeometry(1.5, 3);
+    const material = new THREE.MeshStandardMaterial({
       color: 0x004078, // Navy
-      emissive: 0x68b830, // Green glow
-      shininess: 100,
-      wireframe: false,
+      metalness: 0.7,
+      roughness: 0.2,
     });
     const object = new THREE.Mesh(geometry, material);
     scene.add(object);
 
-    // Add edges for engineering look
+    // Add bright green edges for engineering look
     const edges = new THREE.EdgesGeometry(geometry);
-    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x68b830, linewidth: 2 }));
+    const line = new THREE.LineSegments(
+      edges,
+      new THREE.LineBasicMaterial({ color: 0x68b830, linewidth: 3 })
+    );
     object.add(line);
 
-    // Lighting
-    const light1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    // Strong lighting for visibility
+    const light1 = new THREE.DirectionalLight(0xffffff, 1.2);
     light1.position.set(5, 5, 5);
     scene.add(light1);
 
-    const light2 = new THREE.DirectionalLight(0x68b830, 0.4);
+    const light2 = new THREE.DirectionalLight(0x68b830, 0.8);
     light2.position.set(-5, -5, 5);
     scene.add(light2);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
     // Animation loop
