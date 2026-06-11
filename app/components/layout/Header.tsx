@@ -75,7 +75,7 @@ export default function Header({ activeSection = 'Home', onNavClick }: HeaderPro
               alt="MEPM"
               width={120}
               height={34}
-              className="h-9 w-auto"
+              style={{ width: 'auto', height: '36px' }}
               priority
             />
           </Link>

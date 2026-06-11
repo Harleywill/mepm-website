@@ -56,7 +56,8 @@ export default function Footer() {
             alt="MEPM"
             width={120}
             height={32}
-            className="h-8 w-auto mb-4"
+            style={{ width: 'auto', height: '32px' }}
+            className="mb-4"
           />
           <p className="text-sm leading-relaxed text-white/62 max-w-xs">
             Multi-disciplinary building services consultants delivering electrical, mechanical and environmental engineering with sustainability at the core.
