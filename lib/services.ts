@@ -6,6 +6,8 @@ export interface Service {
   slug: string;
   name: string;
   navLabel: string;
+  /** Drawing-register discipline code, used as a visual motif */
+  code: string;
   shortDescription: string;
   keywords: string[];
   intro: string;
@@ -20,6 +22,7 @@ export const services: Service[] = [
     slug: 'electrical',
     name: 'Electrical engineering',
     navLabel: 'Electrical',
+    code: 'ELE',
     shortDescription:
       'Power, lighting and life-safety systems designed for performance, compliance and efficiency.',
     keywords: ['Power distribution', 'Lighting design', 'Fire detection', 'EV charging'],
@@ -72,6 +75,7 @@ export const services: Service[] = [
     slug: 'mechanical',
     name: 'Mechanical engineering',
     navLabel: 'Mechanical',
+    code: 'MEC',
     shortDescription:
       'Heating, cooling and ventilation systems sized for comfort, air quality and running cost.',
     keywords: ['HVAC design', 'Heat pumps', 'Ventilation', 'Public health'],
@@ -124,6 +128,7 @@ export const services: Service[] = [
     slug: 'environmental',
     name: 'Environmental consulting',
     navLabel: 'Environmental',
+    code: 'ENV',
     shortDescription:
       'Energy assessment and sustainability strategy, from concept design through to compliance.',
     keywords: ['Energy assessments', 'Part L compliance', 'Overheating analysis', 'Net zero'],

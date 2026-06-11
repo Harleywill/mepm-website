@@ -110,7 +110,10 @@ body {
 /* ============================================================
    SEMANTIC TYPE CLASSES
    (font families reference the next/font variables)
+   Layered as base so Tailwind utilities can override them.
    ============================================================ */
+
+@layer base {
 
 .mepm-eyebrow {
   font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
@@ -209,6 +212,8 @@ p,
   color: #717e8a;
 }
 
+} /* end @layer base */
+
 /* ============================================================
    BLUEPRINT GRID (engineering motif for dark sections)
    ============================================================ */
@@ -219,6 +224,15 @@ p,
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+}
+
+.bp-grid-light {
+  background-image:
+    linear-gradient(rgba(0, 64, 120, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 64, 120, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(0, 64, 120, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 64, 120, 0.09) 1px, transparent 1px);
   background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
 }
 
