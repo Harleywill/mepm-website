@@ -27,33 +27,42 @@ export default function Hero3D() {
     camera.position.z = 3;
 
     // Create rotating icosahedron (engineering geometry)
-    const geometry = new THREE.IcosahedronGeometry(1.5, 3);
+    const geometry = new THREE.IcosahedronGeometry(1.8, 4);
+
+    // Solid base mesh
     const material = new THREE.MeshStandardMaterial({
-      color: 0x004078, // Navy
-      metalness: 0.7,
-      roughness: 0.2,
+      color: 0x003d6b, // Darker navy
+      metalness: 0.8,
+      roughness: 0.15,
     });
     const object = new THREE.Mesh(geometry, material);
     scene.add(object);
 
-    // Add bright green edges for engineering look
-    const edges = new THREE.EdgesGeometry(geometry);
-    const line = new THREE.LineSegments(
-      edges,
-      new THREE.LineBasicMaterial({ color: 0x68b830, linewidth: 3 })
-    );
-    object.add(line);
+    // Bright wireframe overlay for clarity
+    const wireframeGeometry = new THREE.EdgesGeometry(geometry);
+    const wireframeMaterial = new THREE.LineBasicMaterial({
+      color: 0x68b830, // Green edges
+      linewidth: 2,
+      transparent: true,
+      opacity: 0.9,
+    });
+    const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+    object.add(wireframe);
 
-    // Strong lighting for visibility
-    const light1 = new THREE.DirectionalLight(0xffffff, 1.2);
-    light1.position.set(5, 5, 5);
+    // Intense lighting
+    const light1 = new THREE.DirectionalLight(0xffffff, 1.5);
+    light1.position.set(8, 8, 8);
     scene.add(light1);
 
-    const light2 = new THREE.DirectionalLight(0x68b830, 0.8);
-    light2.position.set(-5, -5, 5);
+    const light2 = new THREE.DirectionalLight(0x68b830, 1.2);
+    light2.position.set(-6, -6, 6);
     scene.add(light2);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    const light3 = new THREE.DirectionalLight(0xffffff, 0.6);
+    light3.position.set(0, -8, 0);
+    scene.add(light3);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
     // Animation loop
