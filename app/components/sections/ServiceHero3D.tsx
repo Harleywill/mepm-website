@@ -89,12 +89,14 @@ function buildElectrical(rig: THREE.Group): Built {
   };
 }
 
-/** Impeller: hub, pitched blades and shroud ring, slowly turning */
+/** Gear train: a large and a small gear meshing, counter-rotating */
 function buildMechanical(rig: THREE.Group): Built {
   const disposables: Disposable[] = [];
 
   const assembly = new THREE.Group();
-  assembly.rotation.set(0.55, -0.35, 0);
+  assembly.rotation.set(0.45, -0.25, 0);
+  assembly.position.set(-0.2, -0.25, 0);
+  assembly.scale.setScalar(1.12);
   rig.add(assembly);
 
   const navyMat = new THREE.MeshStandardMaterial({
@@ -103,48 +105,82 @@ function buildMechanical(rig: THREE.Group): Built {
     roughness: 0.35,
     flatShading: true,
   });
-  disposables.push(navyMat);
-
-  const hubGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.26, 24);
-  const hub = new THREE.Mesh(hubGeo, navyMat);
-  hub.rotation.x = Math.PI / 2;
-  assembly.add(hub);
-  disposables.push(hubGeo);
-
-  const rotor = new THREE.Group();
-  assembly.add(rotor);
-  const bladeGeo = new THREE.BoxGeometry(0.16, 0.95, 0.04);
-  const bladeEdgeGeo = new THREE.EdgesGeometry(bladeGeo);
-  const bladeEdgeMat = new THREE.LineBasicMaterial({
+  const edgeMat = new THREE.LineBasicMaterial({
     color: GREEN,
     transparent: true,
     opacity: 0.6,
   });
-  for (let i = 0; i < 7; i++) {
-    const arm = new THREE.Group();
-    arm.rotation.z = (i / 7) * Math.PI * 2;
-    const blade = new THREE.Mesh(bladeGeo, navyMat);
-    blade.position.y = 0.78;
-    blade.rotation.y = 0.45;
-    blade.add(new THREE.LineSegments(bladeEdgeGeo, bladeEdgeMat));
-    arm.add(blade);
-    rotor.add(arm);
-  }
-  disposables.push(bladeGeo, bladeEdgeGeo, bladeEdgeMat);
-
-  const shroudGeo = new THREE.TorusGeometry(1.42, 0.02, 6, 80);
-  const shroudMat = new THREE.MeshBasicMaterial({
-    color: NAVY,
+  const boreMat = new THREE.MeshBasicMaterial({
+    color: GREEN,
     transparent: true,
-    opacity: 0.4,
+    opacity: 0.55,
   });
-  assembly.add(new THREE.Mesh(shroudGeo, shroudMat));
-  disposables.push(shroudGeo, shroudMat);
+  disposables.push(navyMat, edgeMat, boreMat);
 
+  const THICKNESS = 0.22;
+  const TOOTH_HEIGHT = 0.16;
+
+  const buildGear = (radius: number, teeth: number): THREE.Group => {
+    const gear = new THREE.Group();
+
+    const bodyGeo = new THREE.CylinderGeometry(radius, radius, THICKNESS, 32);
+    const body = new THREE.Mesh(bodyGeo, navyMat);
+    body.rotation.x = Math.PI / 2;
+    gear.add(body);
+    const bodyEdgeGeo = new THREE.EdgesGeometry(bodyGeo);
+    const bodyEdges = new THREE.LineSegments(bodyEdgeGeo, edgeMat);
+    bodyEdges.rotation.x = Math.PI / 2;
+    gear.add(bodyEdges);
+    disposables.push(bodyGeo, bodyEdgeGeo);
+
+    const toothWidth = ((2 * Math.PI * radius) / teeth) * 0.45;
+    const toothGeo = new THREE.BoxGeometry(toothWidth, TOOTH_HEIGHT, THICKNESS);
+    const toothEdgeGeo = new THREE.EdgesGeometry(toothGeo);
+    for (let i = 0; i < teeth; i++) {
+      const a = (i / teeth) * Math.PI * 2;
+      const tooth = new THREE.Mesh(toothGeo, navyMat);
+      tooth.position.set(
+        Math.cos(a) * (radius + TOOTH_HEIGHT / 2 - 0.02),
+        Math.sin(a) * (radius + TOOTH_HEIGHT / 2 - 0.02),
+        0
+      );
+      tooth.rotation.z = a - Math.PI / 2;
+      tooth.add(new THREE.LineSegments(toothEdgeGeo, edgeMat));
+      gear.add(tooth);
+    }
+    disposables.push(toothGeo, toothEdgeGeo);
+
+    const boreGeo = new THREE.TorusGeometry(radius * 0.28, 0.015, 6, 32);
+    const bore = new THREE.Mesh(boreGeo, boreMat);
+    bore.position.z = THICKNESS / 2 + 0.005;
+    gear.add(bore);
+    disposables.push(boreGeo);
+
+    return gear;
+  };
+
+  // Tooth counts set the ratio; sizes keep a matching tooth pitch
+  const largeGear = buildGear(0.95, 12);
+  largeGear.position.set(-0.55, -0.35, 0);
+  assembly.add(largeGear);
+
+  const smallGear = buildGear(0.55, 7);
+  // Centre distance = both pitch radii, angled up and to the right
+  const meshAngle = 0.66;
+  const centreDistance = 0.95 + 0.55 + TOOTH_HEIGHT;
+  smallGear.position.set(
+    -0.55 + Math.cos(meshAngle) * centreDistance,
+    -0.35 + Math.sin(meshAngle) * centreDistance,
+    0
+  );
+  assembly.add(smallGear);
+
+  const RATIO = 12 / 7;
   return {
     disposables,
     animate: (t) => {
-      rotor.rotation.z = t * 0.5;
+      largeGear.rotation.z = t * 0.25;
+      smallGear.rotation.z = -t * 0.25 * RATIO + Math.PI / 7;
     },
   };
 }
