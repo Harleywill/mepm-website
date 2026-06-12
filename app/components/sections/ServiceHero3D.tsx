@@ -261,12 +261,17 @@ const builders: Record<ServiceVariant, (rig: THREE.Group) => Built> = {
   environmental: buildEnvironmental,
 };
 
-export default function ServiceHero3D({ variant }: { variant: ServiceVariant }) {
+export default function ServiceHero3D({ variant }: { variant: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    // Only render 3D objects for discipline-specific services (electrical, mechanical, environmental)
+    if (!['electrical', 'mechanical', 'environmental'].includes(variant)) {
+      return;
+    }
 
     const prefersReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
@@ -290,7 +295,7 @@ export default function ServiceHero3D({ variant }: { variant: ServiceVariant }) 
     const rig = new THREE.Group();
     scene.add(rig);
 
-    const { disposables, animate } = builders[variant](rig);
+    const { disposables, animate } = builders[variant as ServiceVariant](rig);
 
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
     keyLight.position.set(5, 6, 7);

@@ -1,12 +1,11 @@
-// Service content drafted from standard UK building-services scope.
-// NEEDS CLIENT SIGN-OFF before launch — the live site's services page was
-// unavailable, so scope lists and copy are our drafts, not their words.
+// Service content from MEPM's live offering
+// These are six cross-disciplinary service lines, each touching mechanical, electrical, and public health engineering
 
 export interface Service {
   slug: string;
   name: string;
   navLabel: string;
-  /** Drawing-register discipline code, used as a visual motif */
+  /** Drawing-register discipline code (ELE/MEC/ENV map to hero objects; CON/DES/DEC/VAL/PRJ/COM for services) */
   code: string;
   shortDescription: string;
   keywords: string[];
@@ -18,6 +17,325 @@ export interface Service {
 }
 
 export const services: Service[] = [
+  {
+    slug: 'consulting',
+    name: 'Consulting',
+    navLabel: 'Consulting',
+    code: 'CON',
+    shortDescription:
+      'Full mechanical, electrical, and public health design services for new builds, refurbishments, and fit-outs.',
+    keywords: ['HVAC', 'Power', 'Lighting', 'Drainage', 'Water services'],
+    intro:
+      'Full mechanical, electrical, and public health design services, including HVAC, power, lighting, fire alarms, drainage, and water services. Fully coordinated designs for new builds, refurbishments, and tenant fit-outs, delivered in compliance with current building regulations, CIBSE guidance, and industry best practices.',
+    scope: [
+      {
+        title: 'Mechanical design',
+        description:
+          'HVAC, heating, cooling, ventilation and water services, sized from real calculations rather than rules of thumb.',
+      },
+      {
+        title: 'Electrical design',
+        description:
+          'Power distribution, lighting, fire alarms, and life-safety systems designed for performance and compliance.',
+      },
+      {
+        title: 'Public health engineering',
+        description:
+          'Drainage and water services designed for safety, reliability, and regulatory compliance.',
+      },
+      {
+        title: 'New builds',
+        description:
+          'From initial load assessments through detailed design, fully coordinated MEP systems.',
+      },
+      {
+        title: 'Refurbishments',
+        description:
+          'System redesign and upgrades for existing buildings, surveyed and specified properly.',
+      },
+      {
+        title: 'Tenant fit-outs',
+        description:
+          'Rapid, buildable MEP solutions for commercial and retail spaces, coordinated against existing infrastructure.',
+      },
+    ],
+    deliverables: [
+      'Schematic and detailed design drawings',
+      'Coordinated MEP layouts',
+      'Load assessments and calculations',
+      'Specifications and equipment schedules',
+      'Building Regulations compliance design',
+    ],
+    sustainability:
+      'Every consulting project integrates sustainable design from the outset: low-carbon heating, efficient lighting, demand-controlled ventilation, and renewable integration where justified.',
+    relatedSlugs: ['design-review', 'project-support'],
+  },
+  {
+    slug: 'design-review',
+    name: 'Design Review',
+    navLabel: 'Design Review',
+    code: 'DES',
+    shortDescription:
+      'Integration of MEP systems with architectural and structural elements to ensure clash-free, buildable solutions.',
+    keywords: ['BIM coordination', 'Design audit', 'Compliance review', 'Clash detection'],
+    intro:
+      'Integration of MEP systems with architectural and structural elements to ensure clash-free, buildable solutions. Support with BIM Level 2+ coordination using industry-standard tools. Review of third-party designs for compliance, completeness, and accuracy.',
+    scope: [
+      {
+        title: 'BIM coordination',
+        description:
+          'Support with BIM Level 2+ coordination using industry-standard tools (e.g., Revit, Navisworks).',
+      },
+      {
+        title: 'Third-party design review',
+        description:
+          'Review of third-party designs for compliance, completeness, and accuracy.',
+      },
+      {
+        title: 'Early-stage reviews',
+        description:
+          'Identify potential compliance gaps, performance risks, or coordination issues before they become expensive.',
+      },
+      {
+        title: 'Technical audits',
+        description:
+          'Peer reviews and design risk assessments to protect your programme and commercial outcomes.',
+      },
+      {
+        title: 'Clash resolution',
+        description:
+          'Identification and resolution of conflicts between MEP systems and architectural/structural elements.',
+      },
+      {
+        title: 'Design risk mitigation',
+        description:
+          'Proactive identification of buildability issues, compliance gaps, and performance risks.',
+      },
+    ],
+    deliverables: [
+      'Coordination drawings and reports',
+      'Clash detection and resolution plans',
+      'Compliance audit reports',
+      'Risk assessment documentation',
+      'Design review and recommendations',
+    ],
+    sustainability:
+      'Design review catches inefficient layouts, oversized plant, and poor coordination early, preventing costly redesigns and enabling genuinely sustainable solutions.',
+    relatedSlugs: ['consulting', 'project-support'],
+  },
+  {
+    slug: 'decarbonisation',
+    name: 'Decarbonisation',
+    navLabel: 'Decarbonisation',
+    code: 'DEC',
+    shortDescription:
+      'Strategic planning and design for low-carbon technologies including heat pumps, PV, battery storage, and heat networks.',
+    keywords: ['Heat pumps', 'PV', 'Battery storage', 'Heat networks', 'Net zero'],
+    intro:
+      'Strategic planning and design for low-carbon technologies including heat pumps, PV, battery storage, and heat networks. Feasibility studies and phased transition plans for retrofitting existing assets. Support with government funding applications and carbon reporting.',
+    scope: [
+      {
+        title: 'Low-carbon technology strategy',
+        description:
+          'Strategic planning and design for heat pumps, PV, battery storage, and heat networks.',
+      },
+      {
+        title: 'Feasibility studies',
+        description:
+          'Honest feasibility assessments for low-carbon technologies with payback grounded in real usage.',
+      },
+      {
+        title: 'Retrofit planning',
+        description:
+          'Phased transition plans for retrofitting existing assets, sequenced by cost and carbon impact.',
+      },
+      {
+        title: 'Net-zero roadmaps',
+        description:
+          'Long-term decarbonisation pathways for estates and portfolios with costed options.',
+      },
+      {
+        title: 'Funding support',
+        description:
+          'Support with government funding applications for low-carbon technology installations.',
+      },
+      {
+        title: 'Carbon reporting',
+        description:
+          'Evidence and documentation for carbon accounting, regulatory reporting, and sustainability claims.',
+      },
+    ],
+    deliverables: [
+      'Decarbonisation strategy reports',
+      'Technology feasibility studies',
+      'Phased retrofit plans',
+      'Net-zero roadmaps',
+      'Carbon reporting and evidence documentation',
+    ],
+    sustainability:
+      'This service is sustainability as strategy: every output is designed to measurably lower a building\'s carbon footprint, with the evidence to prove it.',
+    relatedSlugs: ['value-engineering', 'consulting'],
+  },
+  {
+    slug: 'value-engineering',
+    name: 'Value Engineering',
+    navLabel: 'Value Engineering',
+    code: 'VAL',
+    shortDescription:
+      'Detailed review of MEP systems to identify cost-saving opportunities without compromising performance or compliance.',
+    keywords: ['Cost optimisation', 'OPEX reduction', 'CAPEX reduction', 'Efficiency'],
+    intro:
+      'Detailed review of MEP systems to identify cost-saving opportunities without compromising performance or compliance. Long-term OPEX and CAPEX optimisation through efficient, future-proof designs. Rationalisation of plant and distribution to reduce installation and maintenance costs.',
+    scope: [
+      {
+        title: 'Cost-saving identification',
+        description:
+          'Detailed review of MEP systems to identify cost-saving opportunities without compromising performance.',
+      },
+      {
+        title: 'OPEX optimisation',
+        description:
+          'Long-term operating expense reduction through efficient, future-proof designs.',
+      },
+      {
+        title: 'CAPEX reduction',
+        description:
+          'Capital cost reduction through rationalisation of plant and distribution.',
+      },
+      {
+        title: 'Installation simplification',
+        description:
+          'Design refinement to reduce installation complexity, labour, and site coordination effort.',
+      },
+      {
+        title: 'Maintenance cost reduction',
+        description:
+          'System design and selection to minimise long-term maintenance and replacement costs.',
+      },
+      {
+        title: 'Performance-neutral savings',
+        description:
+          'Guaranteed savings achieved without compromising comfort, air quality, safety or compliance.',
+      },
+    ],
+    deliverables: [
+      'Value engineering reports with costed options',
+      'Cost-benefit analysis',
+      'Revised designs with savings quantified',
+      'Maintenance cost analysis',
+      'Payback calculations',
+    ],
+    sustainability:
+      'Value engineering often uncovers oversized or redundant plant that wastes both money and energy; right-sizing is both cheaper and lower-carbon.',
+    relatedSlugs: ['consulting', 'decarbonisation'],
+  },
+  {
+    slug: 'project-support',
+    name: 'Project Support',
+    navLabel: 'Project Support',
+    code: 'PRJ',
+    shortDescription:
+      'End-to-end technical support from tender stage through design, procurement, construction, commissioning, and handover.',
+    keywords: ['Tender support', 'Procurement', 'Site support', 'Commissioning', 'Handover'],
+    intro:
+      'End-to-end technical support from tender stage through design, procurement, construction, commissioning, and handover. Acting as a trusted partner to both contractors and developers, we ensure technical clarity and compliance at every phase. Responsive support for resolving on-site installation or design conflicts.',
+    scope: [
+      {
+        title: 'Tender stage support',
+        description:
+          'Technical specifications and pricing guidance for MEP procurement.',
+      },
+      {
+        title: 'Design clarification',
+        description:
+          'Rapid clarification of design intent and technical requirements during procurement and construction.',
+      },
+      {
+        title: 'Procurement support',
+        description:
+          'Equipment selection and supplier liaison to ensure specification compliance.',
+      },
+      {
+        title: 'On-site technical support',
+        description:
+          'Hands-on collaboration with site teams to resolve installation conflicts and provide buildable solutions under tight deadlines.',
+      },
+      {
+        title: 'Construction issue resolution',
+        description:
+          'Responsive support for resolving on-site design or installation conflicts.',
+      },
+      {
+        title: 'Handover coordination',
+        description:
+          'Technical clarity and compliance support through commissioning and handover.',
+      },
+    ],
+    deliverables: [
+      'Technical specifications and bid documents',
+      'Site visit reports and issue resolutions',
+      'Technical clarifications and RFI responses',
+      'As-built coordination',
+      'Handover documentation',
+    ],
+    sustainability:
+      'Early technical engagement prevents costly redesigns and ensures low-carbon design intent is preserved through construction and commissioning.',
+    relatedSlugs: ['consulting', 'commissioning'],
+  },
+  {
+    slug: 'commissioning',
+    name: 'Commissioning Management',
+    navLabel: 'Commissioning',
+    code: 'COM',
+    shortDescription:
+      'Independent commissioning planning and witnessing services to ensure all systems operate as per design intent.',
+    keywords: ['Commissioning', 'System testing', 'Balancing', 'O&M manuals'],
+    intro:
+      'Independent commissioning planning and witnessing services. Management of commissioning schedules, witnessing documentation, and O&M manual review. Ensuring all systems are fully tested, balanced, and operating as per design intent before handover.',
+    scope: [
+      {
+        title: 'Commissioning planning',
+        description:
+          'Independent planning of commissioning scope, schedules, and testing protocols.',
+      },
+      {
+        title: 'System witnessing',
+        description:
+          'Witnessing and documentation of all mechanical and electrical system testing.',
+      },
+      {
+        title: 'Performance balancing',
+        description:
+          'Balancing of HVAC systems and verification that they deliver design performance.',
+      },
+      {
+        title: 'Testing documentation',
+        description:
+          'Management of commissioning schedules, witnessing documentation, and test protocols.',
+      },
+      {
+        title: 'O&M manual review',
+        description:
+          'Review and verification of operations and maintenance manuals for completeness and accuracy.',
+      },
+      {
+        title: 'Handover sign-off',
+        description:
+          'Independent sign-off that all systems are fully tested, balanced, and operating as per design intent.',
+      },
+    ],
+    deliverables: [
+      'Commissioning plans and schedules',
+      'Witnessing reports and test documentation',
+      'Balancing certificates',
+      'O&M manual review and sign-off',
+      'Final commissioning sign-off report',
+    ],
+    sustainability:
+      'Proper commissioning ensures low-carbon plant actually delivers its designed performance in use, maximising the carbon benefits of design investments.',
+    relatedSlugs: ['project-support', 'consulting'],
+  },
+  // Discipline-specific service pages (with 3D hero objects)
   {
     slug: 'electrical',
     name: 'Electrical engineering',
