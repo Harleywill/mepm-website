@@ -132,6 +132,40 @@ export default async function ServicePage({ params }: PageProps) {
         </div>
       </section>
 
+      {/* Service lines — register of how the discipline is delivered */}
+      <section className="bg-slate-50 border-y border-slate-200">
+        <div className="max-w-7xl mx-auto px-6 py-20">
+          <Reveal>
+            <h2 className="mepm-h2 text-navy-700 mb-4">
+              How we deliver it
+            </h2>
+            <p className="text-slate-600 leading-relaxed max-w-xl mb-12">
+              Six service lines run across every discipline, from first
+              feasibility check to final commissioning sign-off.
+            </p>
+          </Reveal>
+          <div className="grid gap-x-12 md:grid-cols-2">
+            {Object.entries(serviceOfferings).map(([key, offering], i) => (
+              <Reveal key={key} delay={(i % 2) * 0.08}>
+                <div className="border-t border-slate-300 py-7 grid grid-cols-[64px_1fr] gap-5">
+                  <span className="font-mono text-sm font-medium text-green-700 pt-0.5">
+                    SVC-{String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div>
+                    <h3 className="font-body font-semibold text-base text-navy-700 mb-2">
+                      {offering.name}
+                    </h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      {offering.description}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Deliverables — dark band */}
       <section className="bg-navy-900 bp-grid">
         <div className="max-w-7xl mx-auto px-6 py-20 grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -206,37 +240,6 @@ export default async function ServicePage({ params }: PageProps) {
             ))}
           </div>
         </Reveal>
-      </section>
-
-      {/* Service offerings this discipline supports */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <Reveal>
-          <h2 className="mepm-h2 text-navy-700 mb-12">How we deliver {service.name.toLowerCase()}</h2>
-        </Reveal>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {Object.entries(serviceOfferings).map(([key, offering], i) => (
-            <Reveal key={key} delay={(i % 3) * 0.08}>
-              <div className="border border-slate-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
-                <h3 className="font-body font-semibold text-base text-navy-700 mb-2">
-                  {offering.name}
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                  {offering.shortDescription}
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {offering.keywords.slice(0, 3).map((keyword) => (
-                    <span
-                      key={keyword}
-                      className="text-xs font-medium text-slate-500 bg-slate-50 rounded px-2 py-1"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
       </section>
 
       <CtaBand />

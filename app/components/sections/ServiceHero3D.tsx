@@ -19,6 +19,13 @@ interface Built {
 function buildElectrical(rig: THREE.Group): Built {
   const disposables: Disposable[] = [];
 
+  // Scaled wrapper: the outer orbit (radius 2.1) is taller than the
+  // camera's visible half-height (~2.04 at z 5.6), so shrink the whole
+  // atom slightly to keep every orbit inside the canvas
+  const atom = new THREE.Group();
+  atom.scale.setScalar(0.86);
+  rig.add(atom);
+
   // Faceted nucleus
   const coreGeo = new THREE.IcosahedronGeometry(0.5, 1);
   const coreMat = new THREE.MeshStandardMaterial({
@@ -28,7 +35,7 @@ function buildElectrical(rig: THREE.Group): Built {
     flatShading: true,
   });
   const core = new THREE.Mesh(coreGeo, coreMat);
-  rig.add(core);
+  atom.add(core);
   const coreEdgeGeo = new THREE.EdgesGeometry(coreGeo);
   const coreEdgeMat = new THREE.LineBasicMaterial({
     color: GREEN,
@@ -49,7 +56,7 @@ function buildElectrical(rig: THREE.Group): Built {
   orbitalConfigs.forEach((config) => {
     const orbital = new THREE.Group();
     orbital.rotation.set(config.angle[0], config.angle[1], config.angle[2]);
-    rig.add(orbital);
+    atom.add(orbital);
 
     // Orbital ring visualization
     const ringGeo = new THREE.TorusGeometry(config.radius, 0.018, 6, 80);
