@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight, ChevronDown } from 'lucide-react';
+import { Menu, X, ArrowRight, ChevronDown, Phone, Mail } from 'lucide-react';
 import { Button } from '../ui';
 import { services } from '@/lib/services';
 
@@ -59,6 +59,31 @@ export default function Header() {
 
   return (
     <>
+      {/* Contact bar — not sticky, so it scrolls away while the nav stays pinned */}
+      <div className="bg-navy-900 text-white/78 text-[13px]">
+        <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-5 sm:gap-6">
+            <a
+              href="tel:+441482838080"
+              className="inline-flex items-center gap-2 hover:text-white transition-colors"
+            >
+              <Phone size={14} aria-hidden />
+              01482 838080
+            </a>
+            <a
+              href="mailto:info@mepmservices.co.uk"
+              className="inline-flex items-center gap-2 hover:text-white transition-colors"
+            >
+              <Mail size={14} aria-hidden />
+              info@mepmservices.co.uk
+            </a>
+          </div>
+          <span className="hidden md:block font-mono text-[11px] uppercase tracking-[0.08em] text-white/55">
+            Building services consultants
+          </span>
+        </div>
+      </div>
+
       {/* Sticky Header */}
       <header
         className={`sticky top-0 z-50 transition-all duration-200 ease-standard ${
@@ -189,9 +214,9 @@ export default function Header() {
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-      </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — anchored to the header so the contact bar above
+          can't push it out of alignment */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav
@@ -199,7 +224,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden fixed top-19 left-0 right-0 bg-white/85 backdrop-blur-lg border-b border-slate-200 z-40"
+            className="md:hidden absolute top-full left-0 right-0 bg-white/85 backdrop-blur-lg border-b border-slate-200 z-40"
           >
             <div className="p-4 space-y-1">
               <MobileLink href="/" label="Home" pathname={pathname} />
@@ -230,6 +255,7 @@ export default function Header() {
           </motion.nav>
         )}
       </AnimatePresence>
+      </header>
     </>
   );
 }
