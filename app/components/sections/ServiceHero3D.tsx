@@ -162,17 +162,17 @@ function buildMechanical(rig: THREE.Group): Built {
 
   // Tooth counts set the ratio; sizes keep a matching tooth pitch
   const largeGear = buildGear(0.95, 12, 0);
-  largeGear.position.set(-0.3, -0.25, 0);
+  largeGear.position.set(-0.45, -0.2, 0);
   assembly.add(largeGear);
 
   // Small gear offset by half of large gear's tooth spacing (π/6) for proper interlocking
   const smallGear = buildGear(0.55, 7, Math.PI / 6);
-  // Centre distance = both pitch radii for proper meshing
-  const meshAngle = 0.75;
-  const centreDistance = 0.95 + 0.55 + 0.08;
+  // Centre distance = both pitch radii plus clearance for proper meshing
+  const meshAngle = 0.68;
+  const centreDistance = 0.95 + 0.55 + 0.2;
   smallGear.position.set(
-    -0.3 + Math.cos(meshAngle) * centreDistance,
-    -0.25 + Math.sin(meshAngle) * centreDistance,
+    -0.45 + Math.cos(meshAngle) * centreDistance,
+    -0.2 + Math.sin(meshAngle) * centreDistance,
     0
   );
   assembly.add(smallGear);
