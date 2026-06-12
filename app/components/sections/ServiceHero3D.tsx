@@ -121,7 +121,7 @@ function buildMechanical(rig: THREE.Group): Built {
   const TOOTH_HEIGHT = 0.1;
   const TOOTH_DEPTH = 0.08;
 
-  const buildGear = (radius: number, teeth: number): THREE.Group => {
+  const buildGear = (radius: number, teeth: number, phaseOffset: number = 0): THREE.Group => {
     const gear = new THREE.Group();
 
     const bodyGeo = new THREE.CylinderGeometry(radius, radius, THICKNESS, 32);
@@ -137,8 +137,9 @@ function buildMechanical(rig: THREE.Group): Built {
     const toothWidth = ((2 * Math.PI * radius) / teeth) * 0.4;
     const toothGeo = new THREE.BoxGeometry(toothWidth, TOOTH_HEIGHT, THICKNESS);
     const toothEdgeGeo = new THREE.EdgesGeometry(toothGeo);
+    const toothSpacing = (Math.PI * 2) / teeth;
     for (let i = 0; i < teeth; i++) {
-      const a = (i / teeth) * Math.PI * 2;
+      const a = (i / teeth) * Math.PI * 2 + phaseOffset;
       const tooth = new THREE.Mesh(toothGeo, navyMat);
       tooth.position.set(
         Math.cos(a) * (radius + TOOTH_DEPTH),
@@ -161,14 +162,15 @@ function buildMechanical(rig: THREE.Group): Built {
   };
 
   // Tooth counts set the ratio; sizes keep a matching tooth pitch
-  const largeGear = buildGear(0.95, 12);
+  const largeGear = buildGear(0.95, 12, 0);
   largeGear.position.set(-0.55, -0.35, 0);
   assembly.add(largeGear);
 
-  const smallGear = buildGear(0.55, 7);
-  // Centre distance = both pitch radii, angled up and to the right
+  // Small gear offset by half of large gear's tooth spacing (π/6) for proper interlocking
+  const smallGear = buildGear(0.55, 7, Math.PI / 6);
+  // Centre distance = both pitch radii for proper meshing
   const meshAngle = 0.66;
-  const centreDistance = 0.95 + 0.55 + TOOTH_HEIGHT;
+  const centreDistance = 0.95 + 0.55;
   smallGear.position.set(
     -0.55 + Math.cos(meshAngle) * centreDistance,
     -0.35 + Math.sin(meshAngle) * centreDistance,
@@ -181,7 +183,7 @@ function buildMechanical(rig: THREE.Group): Built {
     disposables,
     animate: (t) => {
       largeGear.rotation.z = t * 0.25;
-      smallGear.rotation.z = -t * 0.25 * RATIO + Math.PI / 7;
+      smallGear.rotation.z = -t * 0.25 * RATIO;
     },
   };
 }
