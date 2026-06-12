@@ -94,7 +94,7 @@ function buildMechanical(rig: THREE.Group): Built {
   const disposables: Disposable[] = [];
 
   const assembly = new THREE.Group();
-  assembly.rotation.set(0.45, -0.25, 0);
+  assembly.rotation.set(0.65, -0.25, 0);
   assembly.position.set(-0.2, -0.25, 0);
   assembly.scale.setScalar(1.12);
   rig.add(assembly);
@@ -118,7 +118,8 @@ function buildMechanical(rig: THREE.Group): Built {
   disposables.push(navyMat, edgeMat, boreMat);
 
   const THICKNESS = 0.22;
-  const TOOTH_HEIGHT = 0.16;
+  const TOOTH_HEIGHT = 0.1;
+  const TOOTH_DEPTH = 0.08;
 
   const buildGear = (radius: number, teeth: number): THREE.Group => {
     const gear = new THREE.Group();
@@ -133,15 +134,15 @@ function buildMechanical(rig: THREE.Group): Built {
     gear.add(bodyEdges);
     disposables.push(bodyGeo, bodyEdgeGeo);
 
-    const toothWidth = ((2 * Math.PI * radius) / teeth) * 0.45;
+    const toothWidth = ((2 * Math.PI * radius) / teeth) * 0.4;
     const toothGeo = new THREE.BoxGeometry(toothWidth, TOOTH_HEIGHT, THICKNESS);
     const toothEdgeGeo = new THREE.EdgesGeometry(toothGeo);
     for (let i = 0; i < teeth; i++) {
       const a = (i / teeth) * Math.PI * 2;
       const tooth = new THREE.Mesh(toothGeo, navyMat);
       tooth.position.set(
-        Math.cos(a) * (radius + TOOTH_HEIGHT / 2 - 0.02),
-        Math.sin(a) * (radius + TOOTH_HEIGHT / 2 - 0.02),
+        Math.cos(a) * (radius + TOOTH_DEPTH),
+        Math.sin(a) * (radius + TOOTH_DEPTH),
         0
       );
       tooth.rotation.z = a - Math.PI / 2;
