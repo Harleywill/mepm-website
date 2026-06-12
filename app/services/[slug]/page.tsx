@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { services, getService } from '@/lib/services';
+import { services, getService, serviceOfferings } from '@/lib/services';
 import { Reveal } from '@/app/components/ui';
 import { CtaBand, ServiceHero3D } from '@/app/components/sections';
 import type { ServiceVariant } from '@/app/components/sections';
@@ -206,6 +206,37 @@ export default async function ServicePage({ params }: PageProps) {
             ))}
           </div>
         </Reveal>
+      </section>
+
+      {/* Service offerings this discipline supports */}
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <Reveal>
+          <h2 className="mepm-h2 text-navy-700 mb-12">How we deliver {service.name.toLowerCase()}</h2>
+        </Reveal>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {Object.entries(serviceOfferings).map(([key, offering], i) => (
+            <Reveal key={key} delay={(i % 3) * 0.08}>
+              <div className="border border-slate-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+                <h3 className="font-body font-semibold text-base text-navy-700 mb-2">
+                  {offering.name}
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                  {offering.shortDescription}
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {offering.keywords.slice(0, 3).map((keyword) => (
+                    <span
+                      key={keyword}
+                      className="text-xs font-medium text-slate-500 bg-slate-50 rounded px-2 py-1"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </section>
 
       <CtaBand />
