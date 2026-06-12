@@ -36,9 +36,8 @@ export default async function ServicePage({ params }: PageProps) {
   return (
     <>
       {/* Page hero — drawing sheet header */}
-      <section className="relative overflow-hidden bp-grid-light border-b border-slate-200">
-        <ServiceHero3D variant={service.slug as ServiceVariant} />
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-20 grid gap-12 lg:grid-cols-[1fr_minmax(280px,360px)] lg:items-start">
+      <section className="bp-grid-light border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-6 pt-16 pb-20 grid gap-12 lg:grid-cols-[1fr_minmax(280px,360px)] lg:items-start">
           <div>
             <Link
               href="/services"
@@ -56,9 +55,10 @@ export default async function ServicePage({ params }: PageProps) {
             <p className="mepm-lead max-w-xl">{service.intro}</p>
           </div>
 
-          {/* Title block — engineering drawing motif */}
-          <Reveal delay={0.15} className="lg:mt-10">
-            <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+          {/* Figure above, title block below — like a real drawing sheet */}
+          <Reveal delay={0.15}>
+            <ServiceHero3D variant={service.slug as ServiceVariant} />
+            <div className="mt-4 bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
               <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
                 <span className="mepm-spec">MEPM · Service sheet</span>
                 <span className="font-mono text-sm font-semibold text-green-700">

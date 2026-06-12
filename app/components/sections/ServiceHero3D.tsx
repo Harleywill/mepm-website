@@ -15,67 +15,66 @@ interface Built {
   animate: (t: number) => void;
 }
 
-/** Atom: orbit rings with green electrons around a faceted core */
+/** Atom: nucleus with multiple electrons orbiting in synchronized 3D paths */
 function buildElectrical(rig: THREE.Group): Built {
   const disposables: Disposable[] = [];
 
-  const coreGeo = new THREE.IcosahedronGeometry(0.5, 1);
+  const coreGeo = new THREE.SphereGeometry(0.45, 16, 12);
   const coreMat = new THREE.MeshStandardMaterial({
     color: NAVY,
-    metalness: 0.3,
-    roughness: 0.4,
-    flatShading: true,
+    metalness: 0.5,
+    roughness: 0.3,
   });
   const core = new THREE.Mesh(coreGeo, coreMat);
   rig.add(core);
-  const coreEdgeGeo = new THREE.EdgesGeometry(coreGeo);
-  const coreEdgeMat = new THREE.LineBasicMaterial({
-    color: GREEN,
-    transparent: true,
-    opacity: 0.8,
-  });
-  core.add(new THREE.LineSegments(coreEdgeGeo, coreEdgeMat));
-  disposables.push(coreGeo, coreMat, coreEdgeGeo, coreEdgeMat);
+  disposables.push(coreGeo, coreMat);
 
-  const spinners: THREE.Group[] = [];
-  const tilts: [number, number][] = [
-    [Math.PI / 2.2, 0],
-    [Math.PI / 3, Math.PI / 3],
-    [-Math.PI / 3.5, -Math.PI / 4],
+  // Three orbital rings at different angles
+  const orbitals: { ring: THREE.Group; electrons: THREE.Mesh[]; speed: number }[] = [];
+  const orbitalConfigs = [
+    { angle: [0, 0, 0], radius: 1.4, electronCount: 4, speed: 0.35 },
+    { angle: [Math.PI / 2.5, Math.PI / 3.2, 0], radius: 1.75, electronCount: 4, speed: 0.28 },
+    { angle: [Math.PI / 3.5, -Math.PI / 2.8, Math.PI / 4], radius: 2.05, electronCount: 3, speed: 0.22 },
   ];
-  tilts.forEach(([rx, ry], i) => {
-    const radius = 1.25 + i * 0.12;
-    const tilt = new THREE.Group();
-    tilt.rotation.set(rx, ry, 0);
-    const spin = new THREE.Group();
 
-    const ringGeo = new THREE.TorusGeometry(radius, 0.015, 6, 72);
+  orbitalConfigs.forEach((config) => {
+    const orbital = new THREE.Group();
+    orbital.rotation.set(config.angle[0], config.angle[1], config.angle[2]);
+    rig.add(orbital);
+
+    // Orbital ring visualization
+    const ringGeo = new THREE.TorusGeometry(config.radius, 0.018, 6, 80);
     const ringMat = new THREE.MeshBasicMaterial({
       color: NAVY,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.35,
     });
-    spin.add(new THREE.Mesh(ringGeo, ringMat));
+    orbital.add(new THREE.Mesh(ringGeo, ringMat));
+    disposables.push(ringGeo, ringMat);
 
-    const electronGeo = new THREE.SphereGeometry(0.06, 12, 8);
+    // Electrons evenly spaced around the ring
+    const electrons: THREE.Mesh[] = [];
+    const electronGeo = new THREE.SphereGeometry(0.065, 14, 10);
     const electronMat = new THREE.MeshBasicMaterial({ color: GREEN });
-    const electron = new THREE.Mesh(electronGeo, electronMat);
-    electron.position.x = radius;
-    spin.add(electron);
+    for (let i = 0; i < config.electronCount; i++) {
+      const electron = new THREE.Mesh(electronGeo, electronMat);
+      electron.position.x = config.radius;
+      electron.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), (i / config.electronCount) * Math.PI * 2);
+      orbital.add(electron);
+      electrons.push(electron);
+    }
+    disposables.push(electronGeo, electronMat);
 
-    tilt.add(spin);
-    rig.add(tilt);
-    spinners.push(spin);
-    disposables.push(ringGeo, ringMat, electronGeo, electronMat);
+    orbitals.push({ ring: orbital, electrons, speed: config.speed });
   });
 
   return {
     disposables,
     animate: (t) => {
-      core.rotation.y = t * 0.15;
-      core.rotation.x = t * 0.09;
-      spinners.forEach((spin, i) => {
-        spin.rotation.z = t * (0.4 + i * 0.18);
+      core.rotation.y = t * 0.18;
+      core.rotation.x = t * 0.11;
+      orbitals.forEach(({ ring }, i) => {
+        ring.rotation.z = t * (0.35 + i * 0.15);
       });
     },
   };
@@ -224,7 +223,7 @@ export default function ServiceHero3D({ variant }: { variant: ServiceVariant }) 
       0.1,
       50
     );
-    camera.position.z = 5.2;
+    camera.position.z = 5.6;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -241,17 +240,6 @@ export default function ServiceHero3D({ variant }: { variant: ServiceVariant }) 
     keyLight.position.set(5, 6, 7);
     scene.add(keyLight);
     scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-
-    // Sit the object under the title block column on wide screens,
-    // raised so it peeks above and around the card
-    const place = () => {
-      const w = container.clientWidth;
-      const h = container.clientHeight || 1;
-      const halfWidth = Math.tan((40 * Math.PI) / 360) * 5.2 * (w / h);
-      rig.position.x = Math.min(halfWidth * 0.64, 3.1);
-      rig.position.y = 0.45;
-    };
-    place();
 
     let frameId = 0;
     const clock = new THREE.Clock();
@@ -276,7 +264,6 @@ export default function ServiceHero3D({ variant }: { variant: ServiceVariant }) 
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
-      place();
       renderer.render(scene, camera);
     });
     resizeObserver.observe(container);
@@ -294,7 +281,7 @@ export default function ServiceHero3D({ variant }: { variant: ServiceVariant }) 
     <div
       ref={containerRef}
       aria-hidden
-      className="hidden lg:block absolute inset-0 pointer-events-none"
+      className="relative h-52 lg:h-64 pointer-events-none"
     />
   );
 }
