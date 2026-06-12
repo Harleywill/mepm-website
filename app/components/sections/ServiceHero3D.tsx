@@ -160,19 +160,28 @@ function buildMechanical(rig: THREE.Group): Built {
     return gear;
   };
 
-  // Tooth counts set the ratio; sizes keep a matching tooth pitch
-  const largeGear = buildGear(0.95, 12, 0);
+  // Meshing maths: both gears must share the same tooth pitch, so the
+  // small gear's pitch radius is fixed by the 12:7 tooth ratio. Meshing
+  // happens at the pitch circles (mid-tooth), so the centre distance is
+  // the sum of the two pitch radii.
+  const MESH_ANGLE = 0.68;
+  const LARGE_RADIUS = 0.95;
+  const largePitch = LARGE_RADIUS + TOOTH_HEIGHT / 2;
+  const smallPitch = (largePitch * 7) / 12;
+  const SMALL_RADIUS = smallPitch - TOOTH_HEIGHT / 2;
+  const centreDistance = largePitch + smallPitch + 0.02;
+
+  // Phases: large gear starts with a tooth pointing along the line of
+  // centres; small gear starts with a gap pointing back at it (a gap
+  // centre sits half a tooth spacing, π/7, from a tooth centre)
+  const largeGear = buildGear(LARGE_RADIUS, 12, MESH_ANGLE);
   largeGear.position.set(-0.45, -0.2, 0);
   assembly.add(largeGear);
 
-  // Small gear offset by half of large gear's tooth spacing (π/6) for proper interlocking
-  const smallGear = buildGear(0.55, 7, Math.PI / 6);
-  // Centre distance = both pitch radii plus clearance for proper meshing
-  const meshAngle = 0.68;
-  const centreDistance = 0.95 + 0.55 + 0.2;
+  const smallGear = buildGear(SMALL_RADIUS, 7, MESH_ANGLE + Math.PI - Math.PI / 7);
   smallGear.position.set(
-    -0.45 + Math.cos(meshAngle) * centreDistance,
-    -0.2 + Math.sin(meshAngle) * centreDistance,
+    -0.45 + Math.cos(MESH_ANGLE) * centreDistance,
+    -0.2 + Math.sin(MESH_ANGLE) * centreDistance,
     0
   );
   assembly.add(smallGear);
