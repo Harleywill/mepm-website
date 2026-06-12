@@ -15,19 +15,28 @@ interface Built {
   animate: (t: number) => void;
 }
 
-/** Atom: nucleus with multiple electrons orbiting in synchronized 3D paths */
+/** Atom: faceted nucleus with multiple electrons orbiting in synchronized 3D paths */
 function buildElectrical(rig: THREE.Group): Built {
   const disposables: Disposable[] = [];
 
-  const coreGeo = new THREE.SphereGeometry(0.45, 16, 12);
+  // Faceted nucleus
+  const coreGeo = new THREE.IcosahedronGeometry(0.5, 1);
   const coreMat = new THREE.MeshStandardMaterial({
     color: NAVY,
-    metalness: 0.5,
-    roughness: 0.3,
+    metalness: 0.3,
+    roughness: 0.4,
+    flatShading: true,
   });
   const core = new THREE.Mesh(coreGeo, coreMat);
   rig.add(core);
-  disposables.push(coreGeo, coreMat);
+  const coreEdgeGeo = new THREE.EdgesGeometry(coreGeo);
+  const coreEdgeMat = new THREE.LineBasicMaterial({
+    color: GREEN,
+    transparent: true,
+    opacity: 0.8,
+  });
+  core.add(new THREE.LineSegments(coreEdgeGeo, coreEdgeMat));
+  disposables.push(coreGeo, coreMat, coreEdgeGeo, coreEdgeMat);
 
   // Three orbital rings at different angles
   const orbitals: { ring: THREE.Group; electrons: THREE.Mesh[]; speed: number }[] = [];
