@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { services, getService } from '@/lib/services';
 import { Reveal } from '@/app/components/ui';
-import { CtaBand } from '@/app/components/sections';
+import { CtaBand, ServiceHero3D } from '@/app/components/sections';
+import type { ServiceVariant } from '@/app/components/sections';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -35,8 +36,9 @@ export default async function ServicePage({ params }: PageProps) {
   return (
     <>
       {/* Page hero — drawing sheet header */}
-      <section className="bp-grid-light border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 pt-16 pb-20 grid gap-12 lg:grid-cols-[1fr_minmax(280px,360px)] lg:items-start">
+      <section className="relative overflow-hidden bp-grid-light border-b border-slate-200">
+        <ServiceHero3D variant={service.slug as ServiceVariant} />
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-20 grid gap-12 lg:grid-cols-[1fr_minmax(280px,360px)] lg:items-start">
           <div>
             <Link
               href="/services"
