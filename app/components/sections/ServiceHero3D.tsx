@@ -38,12 +38,12 @@ function buildElectrical(rig: THREE.Group): Built {
   core.add(new THREE.LineSegments(coreEdgeGeo, coreEdgeMat));
   disposables.push(coreGeo, coreMat, coreEdgeGeo, coreEdgeMat);
 
-  // Three orbital rings at different angles
+  // Three orbital rings at different angles with uniform electron distribution
   const orbitals: { ring: THREE.Group; electrons: THREE.Mesh[]; speed: number }[] = [];
   const orbitalConfigs = [
-    { angle: [0, 0, 0], radius: 1.4, electronCount: 4, speed: 0.35 },
-    { angle: [Math.PI / 2.5, Math.PI / 3.2, 0], radius: 1.75, electronCount: 4, speed: 0.28 },
-    { angle: [Math.PI / 3.5, -Math.PI / 2.8, Math.PI / 4], radius: 2.05, electronCount: 3, speed: 0.22 },
+    { angle: [0, 0, 0], radius: 1.3, electronCount: 4, speed: 0.35 },
+    { angle: [Math.PI / 2.8, Math.PI / 3.5, 0], radius: 1.7, electronCount: 4, speed: 0.28 },
+    { angle: [Math.PI / 3.2, -Math.PI / 2.5, Math.PI / 4.2], radius: 2.1, electronCount: 4, speed: 0.22 },
   ];
 
   orbitalConfigs.forEach((config) => {
