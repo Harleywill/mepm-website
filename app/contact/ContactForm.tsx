@@ -40,6 +40,8 @@ export default function ContactForm() {
   const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const set = (key: keyof FormState) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -61,7 +63,7 @@ export default function ContactForm() {
     return next;
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const found = validate();
     if (Object.keys(found).length > 0) {
@@ -72,14 +74,36 @@ export default function ContactForm() {
       return;
     }
     setErrors({});
-    // Phase 2: POST to a form handler / email service with the
-    // attachments. For now we capture the payload locally.
-    console.log('Enquiry:', {
-      ...form,
-      service,
-      files: files.map((f) => ({ name: f.name, size: f.size })),
-    });
-    setSubmitted(true);
+    setSubmitError('');
+    setSending(true);
+
+    const data = new FormData();
+    data.append('name', form.name);
+    data.append('email', form.email);
+    data.append('phone', form.phone);
+    data.append('organisation', form.organisation);
+    data.append('message', form.message);
+    data.append('service', service);
+    files.forEach((file) => data.append('attachments', file));
+
+    try {
+      const res = await fetch('/api/enquiries', { method: 'POST', body: data });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setSubmitError(
+          body.error ||
+            'Something went wrong sending your enquiry. Please try again, or call us on 01482 838080.'
+        );
+        setSending(false);
+      }
+    } catch {
+      setSubmitError(
+        'We could not reach the server. Please check your connection and try again.'
+      );
+      setSending(false);
+    }
   };
 
   if (submitted) {
@@ -258,14 +282,21 @@ export default function ContactForm() {
           <p className="mt-1.5 text-sm text-danger">{errors.consent}</p>
         )}
 
+        {submitError && (
+          <p className="mt-4 rounded-md border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
+            {submitError}
+          </p>
+        )}
+
         {/* Actions */}
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-green-500 px-7 py-3.5 text-base font-semibold text-white transition-all duration-200 hover:-translate-y-px hover:bg-green-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-200 focus:ring-offset-2"
+            disabled={sending}
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-green-500 px-7 py-3.5 text-base font-semibold text-white transition-all duration-200 hover:-translate-y-px hover:bg-green-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-200 focus:ring-offset-2 disabled:opacity-60 disabled:hover:translate-y-0"
           >
-            Send enquiry
-            <ArrowRight size={18} />
+            {sending ? 'Sending…' : 'Send enquiry'}
+            {!sending && <ArrowRight size={18} />}
           </button>
           <a
             href="tel:+441482838080"
