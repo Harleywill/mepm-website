@@ -11,3 +11,23 @@ export const ENQUIRY_STATUS_LABELS: Record<EnquiryStatus, string> = {
   replied: 'Replied',
   archived: 'Archived',
 };
+
+export interface AdminAttachment {
+  id: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+}
+
+export interface AdminEnquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  organisation: string | null;
+  service: string | null;
+  message: string;
+  status: string;
+  createdAt: string;
+  attachments: AdminAttachment[];
+}
