@@ -32,9 +32,16 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
+
+# backend (Prisma DB + uploaded files persist on the server, never commit)
+/prisma/dev.db
+/prisma/dev.db-journal
+/uploads
+/public/uploads
 
 # typescript
 *.tsbuildinfo

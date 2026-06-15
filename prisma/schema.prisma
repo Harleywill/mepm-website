@@ -1,0 +1,75 @@
+// MEPM admin backend — enquiries + projects
+// SQLite + Prisma, mirroring the NTS stack. See
+// docs/superpowers/specs/2026-06-15-admin-backend-enquiries-projects-design.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Enquiry {
+  id           String       @id @default(cuid())
+  name         String
+  email        String
+  phone        String?
+  organisation String?
+  service      String?
+  message      String
+  status       String       @default("new") // new | read | replied | archived
+  createdAt    DateTime     @default(now())
+  attachments  Attachment[]
+}
+
+model Attachment {
+  id         String  @id @default(cuid())
+  enquiryId  String
+  enquiry    Enquiry @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  filename   String
+  storedPath String
+  mimeType   String
+  size       Int
+}
+
+model Project {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  title       String
+  client      String?
+  location    String?
+  sector      String?
+  disciplines String         @default("") // CSV of ELE|MEC|ENV
+  status      String         @default("complete") // planned | in_progress | complete
+  year        Int?
+  summary     String         @default("")
+  detail      String         @default("")
+  featured    Boolean        @default(false)
+  published   Boolean        @default(false)
+  order       Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  images      ProjectImage[]
+}
+
+model ProjectImage {
+  id         String  @id @default(cuid())
+  projectId  String
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  filename   String
+  storedPath String
+  mimeType   String
+  size       Int
+  caption    String?
+  isCover    Boolean @default(false)
+  order      Int     @default(0)
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
