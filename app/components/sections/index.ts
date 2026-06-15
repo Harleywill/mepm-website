@@ -5,4 +5,5 @@ export { default as ServiceHero3D } from './ServiceHero3D';
 export { default as StandardsMarquee } from './StandardsMarquee';
 export { default as ProcessTimeline } from './ProcessTimeline';
 export { default as StatStrip } from './StatStrip';
+export { default as LatestProjects } from './LatestProjects';
 export type { ServiceVariant } from './ServiceHero3D';

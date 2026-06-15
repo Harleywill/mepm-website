@@ -4,6 +4,7 @@ import {
   ServicesOverview,
   StatStrip,
   ProcessTimeline,
+  LatestProjects,
   CtaBand,
 } from './components/sections';
 
@@ -15,6 +16,7 @@ export default function Home() {
       <ServicesOverview />
       <StatStrip />
       <ProcessTimeline />
+      <LatestProjects />
       <CtaBand />
     </>
   );

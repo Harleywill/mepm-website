@@ -14,6 +14,7 @@ const LOGO = '/assets/mepm-logo-tight.png';
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services', children: services },
+  { label: 'Projects', href: '/projects' },
   { label: 'Contact', href: '/contact' },
 ];
 
@@ -240,6 +241,7 @@ export default function Header() {
                   />
                 ))}
               </div>
+              <MobileLink href="/projects" label="Projects" pathname={pathname} />
               <MobileLink href="/contact" label="Contact" pathname={pathname} />
 
               <Button
