@@ -1,0 +1,73 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/db';
+import { verifyAuth } from '@/lib/auth';
+import { deleteUpload } from '@/lib/uploads';
+import { isEnquiryStatus } from '@/lib/enquiries';
+
+async function requireAuth() {
+  await verifyAuth();
+}
+
+/** Admin: fetch one enquiry with its attachments. */
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAuth();
+  } catch {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  const { id } = await params;
+  const enquiry = await prisma.enquiry.findUnique({
+    where: { id },
+    include: { attachments: true },
+  });
+  if (!enquiry) return NextResponse.json({ error: 'not found' }, { status: 404 });
+  return NextResponse.json({ enquiry });
+}
+
+/** Admin: update status. */
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAuth();
+  } catch {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  const { id } = await params;
+  const body = await req.json().catch(() => ({}));
+  const status = String(body.status || '');
+  if (!isEnquiryStatus(status)) {
+    return NextResponse.json({ error: 'invalid status' }, { status: 400 });
+  }
+  const enquiry = await prisma.enquiry.update({
+    where: { id },
+    data: { status },
+  });
+  return NextResponse.json({ enquiry });
+}
+
+/** Admin: delete an enquiry and its attachment files. */
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAuth();
+  } catch {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  const { id } = await params;
+  const enquiry = await prisma.enquiry.findUnique({
+    where: { id },
+    include: { attachments: true },
+  });
+  if (!enquiry) return NextResponse.json({ error: 'not found' }, { status: 404 });
+
+  await Promise.all(enquiry.attachments.map((a) => deleteUpload(a.storedPath)));
+  await prisma.enquiry.delete({ where: { id } });
+  return NextResponse.json({ ok: true });
+}
