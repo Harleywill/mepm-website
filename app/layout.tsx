@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./globals.css";
-import { Header, Footer } from "./components/layout";
+import SiteChrome from "./components/layout/SiteChrome";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -44,11 +44,7 @@ export default function RootLayout({
       className={`scroll-smooth ${archivo.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
     >
       <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased font-body">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );
