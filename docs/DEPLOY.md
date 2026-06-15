@@ -23,13 +23,16 @@ JWT_SECRET="<long random string, 32+ chars>"
 ADMIN_USERNAME="admin"
 ADMIN_PASSWORD="<strong password>"
 
-# SMTP for enquiry alerts — leave SMTP_HOST empty to disable email
-SMTP_HOST="mail.mepmservices.co.uk"
-SMTP_PORT="587"
-SMTP_USER="info@mepmservices.co.uk"
-SMTP_PASS="<mailbox password>"
+# Resend for enquiry alerts — leave RESEND_API_KEY empty to disable email
+RESEND_API_KEY="re_..."
+ENQUIRY_FROM="MEPM <enquiries@mepmservices.co.uk>"
 ENQUIRY_NOTIFY_TO="info@mepmservices.co.uk"
 ```
+
+Email uses [Resend](https://resend.com). Create an API key and verify the
+`mepmservices.co.uk` domain in the Resend dashboard, then set `ENQUIRY_FROM` to
+an address on that domain. Before the domain is verified you can test with
+`ENQUIRY_FROM="MEPM Website <onboarding@resend.dev>"`.
 
 Changing `ADMIN_PASSWORD` and re-running the deploy updates the admin login
 (the seed re-hashes it).
