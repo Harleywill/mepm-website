@@ -1,6 +1,10 @@
 import Link from 'next/link';
+import { getSettings } from '@/lib/settings';
 
-export default function CtaBand() {
+const telHref = (phone: string) => `tel:${phone.replace(/[^+\d]/g, '')}`;
+
+export default async function CtaBand() {
+  const { settings } = await getSettings();
   return (
     <section className="bg-navy-900 bp-grid">
       <div className="max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row md:items-center md:justify-between gap-10">
@@ -20,12 +24,14 @@ export default function CtaBand() {
           >
             Get a quote
           </Link>
-          <a
-            href="tel:+441482838080"
-            className="inline-flex items-center justify-center px-7 py-3.5 rounded-md font-medium text-base border border-white/30 text-white hover:bg-white/10 transition-colors duration-200"
-          >
-            01482 838080
-          </a>
+          {settings.phone && (
+            <a
+              href={telHref(settings.phone)}
+              className="inline-flex items-center justify-center px-7 py-3.5 rounded-md font-medium text-base border border-white/30 text-white hover:bg-white/10 transition-colors duration-200"
+            >
+              {settings.phone}
+            </a>
+          )}
         </div>
       </div>
     </section>

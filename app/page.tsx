@@ -7,14 +7,16 @@ import {
   LatestProjects,
   CtaBand,
 } from './components/sections';
+import { getSettings } from '@/lib/settings';
 
-export default function Home() {
+export default async function Home() {
+  const { stats, qualifications } = await getSettings();
   return (
     <>
       <Hero3D />
       <StandardsMarquee />
       <ServicesOverview />
-      <StatStrip />
+      <StatStrip stats={stats} qualifications={qualifications} />
       <ProcessTimeline />
       <LatestProjects />
       <CtaBand />

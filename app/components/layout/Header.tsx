@@ -8,8 +8,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight, ChevronDown, Phone, Mail } from 'lucide-react';
 import { Button } from '../ui';
 import { services } from '@/lib/services';
+import type { SiteSettingsDTO } from '@/lib/settings';
 
 const LOGO = '/assets/mepm-logo-tight.png';
+
+// Turn a display phone like "01482 838080" into a tel: href.
+const telHref = (phone: string) => `tel:${phone.replace(/[^+\d]/g, '')}`;
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -18,7 +22,7 @@ const navLinks = [
   { label: 'Contact', href: '/contact' },
 ];
 
-export default function Header() {
+export default function Header({ settings }: { settings: SiteSettingsDTO }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -64,20 +68,24 @@ export default function Header() {
       <div className="bg-navy-900 text-white/78 text-[13px]">
         <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between gap-4">
           <div className="flex items-center gap-5 sm:gap-6">
-            <a
-              href="tel:+441482838080"
-              className="inline-flex items-center gap-2 hover:text-white transition-colors"
-            >
-              <Phone size={14} aria-hidden />
-              01482 838080
-            </a>
-            <a
-              href="mailto:info@mepmservices.co.uk"
-              className="inline-flex items-center gap-2 hover:text-white transition-colors"
-            >
-              <Mail size={14} aria-hidden />
-              info@mepmservices.co.uk
-            </a>
+            {settings.phone && (
+              <a
+                href={telHref(settings.phone)}
+                className="inline-flex items-center gap-2 hover:text-white transition-colors"
+              >
+                <Phone size={14} aria-hidden />
+                {settings.phone}
+              </a>
+            )}
+            {settings.email && (
+              <a
+                href={`mailto:${settings.email}`}
+                className="inline-flex items-center gap-2 hover:text-white transition-colors"
+              >
+                <Mail size={14} aria-hidden />
+                {settings.email}
+              </a>
+            )}
           </div>
           <span className="hidden md:block font-mono text-[11px] uppercase tracking-[0.08em] text-white/55">
             Building services consultants

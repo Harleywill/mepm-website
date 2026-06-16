@@ -1,38 +1,16 @@
 import type { Metadata } from 'next';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { Reveal } from '../components/ui';
+import { getSettings } from '@/lib/settings';
 import ContactForm from './ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact — MEPM Building Services Consultants',
   description:
-    'Tell us about your project. Call 01482 838080, email info@mepmservices.co.uk, or send an enquiry online with drawings or photos attached.',
+    'Tell us about your project. Call us, email us, or send an enquiry online with drawings or photos attached.',
 };
 
-const DETAILS = [
-  {
-    icon: Phone,
-    label: 'Phone',
-    value: '01482 838080',
-    href: 'tel:+441482838080',
-  },
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'info@mepmservices.co.uk',
-    href: 'mailto:info@mepmservices.co.uk',
-  },
-  {
-    icon: MapPin,
-    label: 'Office',
-    lines: ['Unit F2 Rotterdam Park', 'Hull, HU7 0AN', 'East Riding of Yorkshire'],
-  },
-  {
-    icon: Clock,
-    label: 'Hours',
-    lines: ['Mon–Fri · 08:30–17:00', 'Replies within one working day'],
-  },
-];
+const telHref = (phone: string) => `tel:${phone.replace(/[^+\d]/g, '')}`;
 
 const NEXT_STEPS = [
   'We read your enquiry and reply within one working day.',
@@ -40,7 +18,45 @@ const NEXT_STEPS = [
   'A tailored engineering approach and fee proposal.',
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { settings } = await getSettings();
+  const addressLines = [
+    settings.addressLine1,
+    settings.addressLine2,
+    settings.addressLine3,
+  ].filter(Boolean);
+
+  const DETAILS = [
+    settings.phone && {
+      icon: Phone,
+      label: 'Phone',
+      value: settings.phone,
+      href: telHref(settings.phone),
+    },
+    settings.email && {
+      icon: Mail,
+      label: 'Email',
+      value: settings.email,
+      href: `mailto:${settings.email}`,
+    },
+    addressLines.length > 0 && {
+      icon: MapPin,
+      label: 'Office',
+      lines: addressLines,
+    },
+    {
+      icon: Clock,
+      label: 'Hours',
+      lines: ['Mon–Fri · 08:30–17:00', 'Replies within one working day'],
+    },
+  ].filter(Boolean) as {
+    icon: typeof Phone;
+    label: string;
+    value?: string;
+    href?: string;
+    lines?: string[];
+  }[];
+
   return (
     <>
       {/* Header — drawing-sheet band */}

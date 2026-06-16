@@ -1,23 +1,33 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { services } from '@/lib/services';
+import type { SiteSettingsDTO } from '@/lib/settings';
 
 const LOGO_REVERSED = '/assets/mepm-logo-reversed-tight.png';
 
-const socialLinks = [
-  { label: 'LinkedIn', href: '#', icon: 'fab fa-linkedin-in' },
-  { label: 'Twitter', href: '#', icon: 'fab fa-twitter' },
-  { label: 'Instagram', href: '#', icon: 'fab fa-instagram' },
-  { label: 'Facebook', href: '#', icon: 'fab fa-facebook-f' },
-];
+const telHref = (phone: string) => `tel:${phone.replace(/[^+\d]/g, '')}`;
 
 const companyLinks = [
   { label: 'Home', href: '/' },
   { label: 'All services', href: '/services' },
+  { label: 'Projects', href: '/projects' },
   { label: 'Contact', href: '/contact' },
 ];
 
-export default function Footer() {
+export default function Footer({ settings }: { settings: SiteSettingsDTO }) {
+  const socialLinks = [
+    { label: 'LinkedIn', href: settings.linkedin, icon: 'fab fa-linkedin-in' },
+    { label: 'Twitter', href: settings.twitter, icon: 'fab fa-twitter' },
+    { label: 'Instagram', href: settings.instagram, icon: 'fab fa-instagram' },
+    { label: 'Facebook', href: settings.facebook, icon: 'fab fa-facebook-f' },
+  ].filter((s) => s.href);
+
+  const addressLines = [
+    settings.addressLine1,
+    settings.addressLine2,
+    settings.addressLine3,
+  ].filter(Boolean);
+
   return (
     <footer className="bg-navy-900 text-white/72 font-body">
       {/* Main Footer Content */}
@@ -37,18 +47,22 @@ export default function Footer() {
           </p>
 
           {/* Social Links */}
-          <div className="flex gap-3 mt-5">
-            {socialLinks.map(({ label, href, icon }) => (
-              <Link
-                key={label}
-                href={href}
-                aria-label={label}
-                className="w-10 h-10 rounded-sm border border-white/18 flex items-center justify-center text-white/80 hover:bg-white/12 transition-colors"
-              >
-                <i className={`${icon} text-base`} />
-              </Link>
-            ))}
-          </div>
+          {socialLinks.length > 0 && (
+            <div className="flex gap-3 mt-5">
+              {socialLinks.map(({ label, href, icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-sm border border-white/18 flex items-center justify-center text-white/80 hover:bg-white/12 transition-colors"
+                >
+                  <i className={`${icon} text-base`} />
+                </a>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Services */}
@@ -95,29 +109,36 @@ export default function Footer() {
             CONTACT
           </div>
           <ul className="space-y-3 text-sm">
-            <li>
-              <a
-                href="tel:+441482838080"
-                className="text-white/72 hover:text-white/90 transition-colors"
-              >
-                01482 838080
-              </a>
-            </li>
-            <li>
-              <a
-                href="mailto:info@mepmservices.co.uk"
-                className="text-white/72 hover:text-white/90 transition-colors"
-              >
-                info@mepmservices.co.uk
-              </a>
-            </li>
-            <li className="text-white/62 leading-relaxed">
-              Unit F2 Rotterdam Park
-              <br />
-              Hull, HU7 0AN
-              <br />
-              East Riding of Yorkshire
-            </li>
+            {settings.phone && (
+              <li>
+                <a
+                  href={telHref(settings.phone)}
+                  className="text-white/72 hover:text-white/90 transition-colors"
+                >
+                  {settings.phone}
+                </a>
+              </li>
+            )}
+            {settings.email && (
+              <li>
+                <a
+                  href={`mailto:${settings.email}`}
+                  className="text-white/72 hover:text-white/90 transition-colors"
+                >
+                  {settings.email}
+                </a>
+              </li>
+            )}
+            {addressLines.length > 0 && (
+              <li className="text-white/62 leading-relaxed">
+                {addressLines.map((line, i) => (
+                  <span key={i}>
+                    {line}
+                    {i < addressLines.length - 1 && <br />}
+                  </span>
+                ))}
+              </li>
+            )}
           </ul>
         </div>
       </div>
