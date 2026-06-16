@@ -11,6 +11,7 @@ const LOGO = '/assets/mepm-logo-tight.png';
 const NAV = [
   { label: 'Enquiries', href: '/admin/enquiries' },
   { label: 'Projects', href: '/admin/projects' },
+  { label: 'Settings', href: '/admin/settings' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
