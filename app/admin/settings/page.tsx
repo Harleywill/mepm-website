@@ -12,8 +12,25 @@ const input =
   'w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-navy-300/60 focus:border-navy-300 transition-colors';
 const label = 'mb-1.5 block text-sm font-medium text-navy-700';
 
-type StatRow = Pick<StatDTO, 'prefix' | 'value' | 'suffix' | 'label'>;
+// In the admin the user edits a single "figure" string (e.g. "29", "−40%",
+// "98%", "480+"). We split it into prefix/number/suffix for the count-up
+// animation only at save time, and rejoin it when loading.
+type StatRow = { figure: string; label: string };
 type QualRow = { label: string };
+
+function buildFigure(prefix: string, value: number, suffix: string) {
+  return `${prefix}${value}${suffix}`;
+}
+
+function parseFigure(figure: string): {
+  prefix: string;
+  value: number;
+  suffix: string;
+} {
+  const m = figure.trim().match(/^(\D*?)(\d+)(\D*)$/);
+  if (!m) return { prefix: figure.trim(), value: 0, suffix: '' };
+  return { prefix: m[1], value: Number(m[2]), suffix: m[3] };
+}
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<SiteSettingsDTO | null>(null);
@@ -29,9 +46,7 @@ export default function AdminSettingsPage() {
         setSettings(d.settings);
         setStats(
           (d.stats as StatDTO[]).map((s) => ({
-            prefix: s.prefix,
-            value: s.value,
-            suffix: s.suffix,
+            figure: buildFigure(s.prefix, s.value, s.suffix),
             label: s.label,
           }))
         );
@@ -45,10 +60,14 @@ export default function AdminSettingsPage() {
   const save = async () => {
     setSaving(true);
     setSaved(false);
+    // Split each figure into prefix/number/suffix for the public count-up.
+    const statsPayload = stats
+      .filter((s) => s.label.trim() || s.figure.trim())
+      .map((s) => ({ ...parseFigure(s.figure), label: s.label }));
     const res = await fetch('/api/settings', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ settings, stats, qualifications: quals }),
+      body: JSON.stringify({ settings, stats: statsPayload, qualifications: quals }),
     });
     setSaving(false);
     if (res.ok) {
@@ -102,40 +121,49 @@ export default function AdminSettingsPage() {
 
       <Section
         title="Stat strip"
-        hint="The count-up figures in the navy band. Value is the number that counts up; prefix/suffix wrap it (e.g. −40%)."
-        onAdd={() => setStats((p) => [...p, { prefix: '', value: 0, suffix: '', label: '' }])}
+        hint="The big numbers in the navy band on the homepage. Type the figure exactly as it should appear — e.g. 29, −40%, 98% or 480+ — and a label underneath it."
+        onAdd={() => setStats((p) => [...p, { figure: '', label: '' }])}
       >
         <div className="space-y-3">
+          {stats.length > 0 && (
+            <div className="flex items-center gap-3 px-1">
+              <span className="w-32 font-mono text-[11px] uppercase tracking-[0.06em] text-slate-400">
+                Figure
+              </span>
+              <span className="flex-1 font-mono text-[11px] uppercase tracking-[0.06em] text-slate-400">
+                Label
+              </span>
+              <span className="w-44 font-mono text-[11px] uppercase tracking-[0.06em] text-slate-400">
+                Preview
+              </span>
+              <span className="w-8" />
+            </div>
+          )}
           {stats.map((s, i) => (
-            <div key={i} className="flex items-center gap-2">
+            <div key={i} className="flex items-center gap-3">
               <input
-                value={s.prefix}
-                onChange={(e) => setStats((p) => p.map((x, j) => (j === i ? { ...x, prefix: e.target.value } : x)))}
-                className={`${input} w-14`}
-                placeholder="±"
-                aria-label="Prefix"
-              />
-              <input
-                type="number"
-                value={s.value}
-                onChange={(e) => setStats((p) => p.map((x, j) => (j === i ? { ...x, value: Number(e.target.value) } : x)))}
-                className={`${input} w-24`}
-                aria-label="Value"
-              />
-              <input
-                value={s.suffix}
-                onChange={(e) => setStats((p) => p.map((x, j) => (j === i ? { ...x, suffix: e.target.value } : x)))}
-                className={`${input} w-16`}
-                placeholder="%/+"
-                aria-label="Suffix"
+                value={s.figure}
+                onChange={(e) => setStats((p) => p.map((x, j) => (j === i ? { ...x, figure: e.target.value } : x)))}
+                className={`${input} w-32`}
+                placeholder="29"
+                aria-label="Figure"
               />
               <input
                 value={s.label}
                 onChange={(e) => setStats((p) => p.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))}
                 className={`${input} flex-1`}
-                placeholder="Label, e.g. Years in practice"
+                placeholder="Years in practice"
                 aria-label="Label"
               />
+              {/* Live preview of how this stat renders in the navy band */}
+              <div className="flex w-44 items-center gap-2.5 rounded-md bg-navy-900 px-3 py-2">
+                <span className="font-display text-xl font-extrabold leading-none text-white">
+                  {s.figure || '—'}
+                </span>
+                <span className="truncate text-[11px] leading-tight text-white/70">
+                  {s.label || 'label'}
+                </span>
+              </div>
               <RemoveButton onClick={() => setStats((p) => p.filter((_, j) => j !== i))} />
             </div>
           ))}
