@@ -45,6 +45,14 @@ export const DEFAULT_SETTINGS: SiteSettingsDTO = {
   linkedin: '',
 };
 
+// Shown whenever no stats have been set (fresh DB, seed skipped, or all
+// removed) so the stat strip is never empty unless the admin overrides it.
+export const DEFAULT_STATS: StatDTO[] = [
+  { id: 'default-0', prefix: '', value: 29, suffix: '', label: 'Years in practice', order: 0 },
+  { id: 'default-1', prefix: '', value: 3, suffix: '', label: 'Engineering disciplines, one team', order: 1 },
+  { id: 'default-2', prefix: '', value: 6, suffix: '', label: 'Service lines, feasibility to handover', order: 2 },
+];
+
 /** Read settings, stats and qualifications. Server-only (uses Prisma).
  *  Falls back to defaults if the singleton row is missing. */
 export async function getSettings(): Promise<FullSettings> {
@@ -68,5 +76,9 @@ export async function getSettings(): Promise<FullSettings> {
       }
     : DEFAULT_SETTINGS;
 
-  return { settings, stats, qualifications };
+  return {
+    settings,
+    stats: stats.length > 0 ? stats : DEFAULT_STATS,
+    qualifications,
+  };
 }
