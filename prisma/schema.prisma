@@ -73,3 +73,35 @@ model AdminUser {
   passwordHash String
   createdAt    DateTime @default(now())
 }
+
+// Single-row site settings (id is always "main").
+model SiteSettings {
+  id           String   @id @default("main")
+  phone        String   @default("")
+  email        String   @default("")
+  addressLine1 String   @default("")
+  addressLine2 String   @default("")
+  addressLine3 String   @default("")
+  facebook     String   @default("")
+  twitter      String   @default("")
+  instagram    String   @default("")
+  linkedin     String   @default("")
+  updatedAt    DateTime @updatedAt
+}
+
+// Editable count-up figures in the stat strip.
+model Stat {
+  id     String @id @default(cuid())
+  prefix String @default("")
+  value  Int    @default(0)
+  suffix String @default("")
+  label  String
+  order  Int    @default(0)
+}
+
+// Editable credentials/memberships shown in the stat strip band.
+model Qualification {
+  id    String @id @default(cuid())
+  label String
+  order Int    @default(0)
+}
