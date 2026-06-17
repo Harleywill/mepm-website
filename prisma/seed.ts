@@ -129,8 +129,10 @@ async function main() {
   ];
 
   for (const member of team) {
-    await prisma.team.create({
-      data: member,
+    await prisma.team.upsert({
+      where: { name: member.name },
+      update: member,
+      create: member,
     });
   }
   console.log('Seeded 3 team members');
@@ -154,8 +156,10 @@ async function main() {
   ];
 
   for (const testimonial of testimonials) {
-    await prisma.testimonial.create({
-      data: testimonial,
+    await prisma.testimonial.upsert({
+      where: { author: testimonial.author },
+      update: testimonial,
+      create: testimonial,
     });
   }
   console.log('Seeded 2 testimonials');

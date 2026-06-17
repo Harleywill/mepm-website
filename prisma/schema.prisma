@@ -124,7 +124,7 @@ model Service {
 model Testimonial {
   id        String   @id @default(cuid())
   quote     String
-  author    String
+  author    String   @unique
   company   String?
   logo      String?  // stored path (public/uploads/testimonials/…)
   order     Int      @default(0)
@@ -134,7 +134,7 @@ model Testimonial {
 
 model Team {
   id         String   @id @default(cuid())
-  name       String
+  name       String   @unique
   role       String   // e.g., "Senior MEP Engineer"
   discipline String   // ELE | MEC | ENV
   bio        String   @default("")
