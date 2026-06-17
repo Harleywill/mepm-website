@@ -71,7 +71,9 @@ model AdminUser {
   id           String   @id @default(cuid())
   username     String   @unique
   passwordHash String
+  role         String   @default("editor") // administrator | editor | viewer
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 // Single-row site settings (id is always "main").
@@ -103,5 +105,47 @@ model Stat {
 model Qualification {
   id    String @id @default(cuid())
   label String
+  order Int    @default(0)
+}
+
+model Service {
+  id        String   @id @default(cuid())
+  code      String   @unique // ELE | MEC | ENV
+  title     String
+  desc      String
+  points    String   @default("") // JSON array of strings, stored as string
+  statValue String   @default("")
+  statLabel String   @default("")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  quote     String
+  author    String
+  company   String?
+  logo      String?  // stored path (public/uploads/testimonials/…)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Team {
+  id         String   @id @default(cuid())
+  name       String
+  role       String   // e.g., "Senior MEP Engineer"
+  discipline String   // ELE | MEC | ENV
+  bio        String   @default("")
+  photo      String?  // stored path (public/uploads/team/…)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Accreditation {
+  id    String @id @default(cuid())
+  label String // e.g., "CIBSE", "ISO 9001"
   order Int    @default(0)
 }
