@@ -12,8 +12,8 @@ export const hashPassword = (pw: string) => bcrypt.hash(pw, 10);
 export const verifyPassword = (pw: string, hash: string) =>
   bcrypt.compare(pw, hash);
 
-export async function signToken(username: string): Promise<string> {
-  return new SignJWT({ sub: username })
+export async function signToken(username: string, role: string = 'viewer'): Promise<string> {
+  return new SignJWT({ sub: username, role })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
@@ -48,4 +48,23 @@ export async function verifyAuth(): Promise<JWTPayload> {
   const token = (await cookies()).get(COOKIE)?.value;
   if (!token) throw new Error('unauthorized');
   return verifyToken(token);
+}
+
+export interface AuthenticatedUser {
+  username: string;
+  role: string;
+}
+
+/**
+ * Like verifyAuth(), but returns the full user object (username + role).
+ * Call at the start of protected routes to get user + check auth in one step.
+ */
+export async function verifyAuthWithUser(): Promise<AuthenticatedUser> {
+  const token = (await cookies()).get(COOKIE)?.value;
+  if (!token) throw new Error('unauthorized');
+  const payload = await verifyToken(token);
+  return {
+    username: payload.sub as string,
+    role: (payload.role as string) || 'viewer',
+  };
 }

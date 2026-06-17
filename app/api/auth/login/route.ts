@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const token = await signToken(user.username);
+  const token = await signToken(user.username, user.role);
   await setAuthCookie(token);
   return NextResponse.json({ ok: true });
 }
