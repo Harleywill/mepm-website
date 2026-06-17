@@ -237,3 +237,79 @@ export const services: Service[] = [
 export function getService(slug: string): Service | undefined {
   return services.find((s) => s.slug === slug);
 }
+
+// ============================================================================
+// Services CRUD API Validation & Helpers
+// ============================================================================
+
+// Service codes for DB validation
+export const SERVICE_CODES = ['ELE', 'MEC', 'ENV'] as const;
+export type ServiceCode = (typeof SERVICE_CODES)[number];
+
+export const SERVICE_CODE_LABELS: Record<ServiceCode, string> = {
+  ELE: 'Electrical',
+  MEC: 'Mechanical',
+  ENV: 'Environmental',
+};
+
+/**
+ * Check if a string is a valid service code.
+ */
+export function isValidServiceCode(value: string): value is ServiceCode {
+  return (SERVICE_CODES as readonly string[]).includes(value.toUpperCase());
+}
+
+/**
+ * Parse JSON-stringified points array from DB string.
+ * Returns empty array if invalid/empty string.
+ */
+export function parsePoints(pointsJson: string): string[] {
+  if (!pointsJson || typeof pointsJson !== 'string') return [];
+  try {
+    const parsed = JSON.parse(pointsJson);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Stringify points array for storage in DB.
+ * Input can be array or already-stringified JSON.
+ */
+export function stringifyPoints(points: string[] | string): string {
+  if (typeof points === 'string') return points;
+  if (!Array.isArray(points)) return JSON.stringify([]);
+  return JSON.stringify(points);
+}
+
+/**
+ * Validate a service object for CRUD operations. Returns error string or null.
+ */
+export function validateService(data: Record<string, unknown>): string | null {
+  const code = String(data.code || '').toUpperCase();
+  if (!code || !isValidServiceCode(code)) {
+    return `Code must be one of: ${SERVICE_CODES.join(', ')}`;
+  }
+
+  const title = String(data.title || '').trim();
+  if (!title) return 'Title is required';
+
+  const desc = String(data.desc || '').trim();
+  if (!desc) return 'Description is required';
+
+  return null;
+}
+
+export interface ServiceDTO {
+  id: string;
+  code: string;
+  title: string;
+  desc: string;
+  points: string[]; // Parsed from DB
+  statValue: string;
+  statLabel: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
