@@ -5,10 +5,12 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import AdminGuard from './AdminGuard';
+import './styles/theme.css';
 
-const LOGO = '/assets/mepm-logo-tight.png';
+const LOGO = '/mepm-logo.png';
 
 const NAV = [
+  { label: 'Dashboard', href: '/admin/dashboard' },
   { label: 'Enquiries', href: '/admin/enquiries' },
   { label: 'Projects', href: '/admin/projects' },
   { label: 'Settings', href: '/admin/settings' },

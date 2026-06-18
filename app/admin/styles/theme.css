@@ -1,0 +1,243 @@
+/* ============================================================
+   MEPM Building Services Consultants — Foundations
+   Color + Type tokens. Import this file in any MEPM design.
+   Fonts load from Google Fonts CDN (see README for substitution notes).
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ---------- BRAND CORE ---------- */
+  --mepm-navy: #004078;   /* logo "MEP" — primary */
+  --mepm-green: #68B830;  /* logo "M" accent — sustainability */
+
+  /* ---------- NAVY SCALE (primary) ---------- */
+  --navy-950: #001A33;
+  --navy-900: #002850;
+  --navy-800: #013463;
+  --navy-700: #004078;  /* BRAND */
+  --navy-600: #0A5491;
+  --navy-500: #1E6CAD;
+  --navy-400: #4A8DC4;
+  --navy-300: #84B2D9;
+  --navy-200: #B9D3E9;
+  --navy-100: #DCE9F3;
+  --navy-50:  #EEF4FA;
+
+  /* ---------- GREEN SCALE (accent / sustainability) ---------- */
+  --green-900: #2E5614;
+  --green-800: #3E7A1C;
+  --green-700: #4F9A25;
+  --green-600: #5AAA2B;
+  --green-500: #68B830;  /* BRAND */
+  --green-400: #84C857;
+  --green-300: #A6D885;
+  --green-200: #C9E7B5;
+  --green-100: #E4F2D8;
+  --green-50:  #F2F8EB;
+
+  /* ---------- NEUTRALS (cool slate) ---------- */
+  --slate-950: #0E1620;
+  --slate-900: #18222E;
+  --slate-800: #27323F;
+  --slate-700: #3A4654;
+  --slate-600: #54616E;
+  --slate-500: #717E8A;
+  --slate-400: #95A0AB;
+  --slate-300: #BFC7CF;
+  --slate-200: #DDE2E7;
+  --slate-100: #EDF0F3;
+  --slate-50:  #F6F8FA;
+  --white:     #FFFFFF;
+
+  /* ---------- SECONDARY / SUPPORT ---------- */
+  --steel: #3D8FCB;       /* secondary blue — diagrams, links */
+  --steel-dark: #1E6CAD;
+
+  /* ---------- SEMANTIC ---------- */
+  --success: #4F9A25;
+  --success-bg: #E4F2D8;
+  --info: #1E6CAD;
+  --info-bg: #DCE9F3;
+  --warning: #E0941A;
+  --warning-bg: #FBEFD5;
+  --danger: #D14343;
+  --danger-bg: #FBE3E3;
+
+  /* ---------- SEMANTIC SURFACE / TEXT ROLES ---------- */
+  --bg:        #FFFFFF;
+  --bg-subtle: #F6F8FA;   /* page tint / section bands */
+  --bg-sunken: #EEF4FA;   /* navy-tinted panels */
+  --surface:   #FFFFFF;   /* cards */
+  --border:    #DDE2E7;   /* hairlines */
+  --border-strong: #BFC7CF;
+
+  --fg:        #18222E;   /* primary text */
+  --fg-muted:  #54616E;   /* secondary text */
+  --fg-subtle: #95A0AB;   /* tertiary / captions */
+  --fg-on-navy:#FFFFFF;
+  --link:      #0A5491;
+
+  /* ---------- TYPE FAMILIES ---------- */
+  --font-display: 'Archivo', system-ui, sans-serif;
+  --font-body:    'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, monospace;
+
+  /* ---------- TYPE SCALE (1.250 major-third-ish, tuned) ---------- */
+  --text-xs:   0.75rem;   /* 12 */
+  --text-sm:   0.875rem;  /* 14 */
+  --text-base: 1rem;      /* 16 */
+  --text-lg:   1.125rem;  /* 18 */
+  --text-xl:   1.375rem;  /* 22 */
+  --text-2xl:  1.75rem;   /* 28 */
+  --text-3xl:  2.25rem;   /* 36 */
+  --text-4xl:  3rem;      /* 48 */
+  --text-5xl:  3.875rem;  /* 62 */
+  --text-6xl:  5rem;      /* 80 */
+
+  --leading-tight: 1.08;
+  --leading-snug: 1.25;
+  --leading-normal: 1.55;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-caps: 0.12em;   /* eyebrows / overlines */
+
+  /* ---------- SPACING (4px base) ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* ---------- RADII ---------- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  /* ---------- SHADOWS (cool navy-tinted) ---------- */
+  --shadow-xs: 0 1px 2px rgba(0, 40, 80, 0.06);
+  --shadow-sm: 0 1px 3px rgba(0, 40, 80, 0.08), 0 1px 2px rgba(0, 40, 80, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 40, 80, 0.10), 0 2px 4px rgba(0, 40, 80, 0.06);
+  --shadow-lg: 0 12px 28px rgba(0, 40, 80, 0.14), 0 4px 8px rgba(0, 40, 80, 0.06);
+  --shadow-xl: 0 24px 48px rgba(0, 40, 80, 0.18);
+
+  /* ---------- MOTION ---------- */
+  --ease-standard: cubic-bezier(0.2, 0, 0.1, 1); /* @kind other */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-med: 220ms; /* @kind other */
+  --dur-slow: 360ms; /* @kind other */
+}
+
+/* ============================================================
+   SEMANTIC TYPE CLASSES — use these in markup
+   ============================================================ */
+
+.mepm-eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--green-700);
+}
+
+.mepm-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-6xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg);
+}
+
+h1, .mepm-h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg);
+}
+
+h2, .mepm-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-3xl);
+  line-height: 1.12;
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg);
+}
+
+h3, .mepm-h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-2xl);
+  line-height: 1.18;
+  color: var(--fg);
+}
+
+h4, .mepm-h4 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+  color: var(--fg);
+}
+
+.mepm-lead {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  color: var(--fg-muted);
+}
+
+p, .mepm-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--fg);
+}
+
+.mepm-small {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-muted);
+}
+
+.mepm-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--fg-subtle);
+}
+
+.mepm-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0;
+  color: var(--fg-muted);
+}
+
+/* Data / spec label — common in engineering UI */
+.mepm-spec {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--slate-500);
+}

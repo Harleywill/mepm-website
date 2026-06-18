@@ -110,7 +110,7 @@ export default function ContactForm() {
     return (
       <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-3">
-          <span className="mepm-spec">MEPM · Enquiry received</span>
+          <span className="mepm-spec">MEPM · Enquiry received`</span>
           <span className="font-mono text-xs font-semibold text-green-700">
             REF-{new Date().getFullYear()}
           </span>
@@ -122,7 +122,7 @@ export default function ContactForm() {
           <h2 className="mepm-h3 text-navy-700">Thanks, {form.name.split(' ')[0] || 'there'}</h2>
           <p className="mt-3 max-w-sm text-slate-600">
             Your enquiry is with us{files.length > 0 ? `, along with ${files.length} file${files.length > 1 ? 's' : ''}` : ''}.
-            One of our engineers will come back to you within one working day.
+            One of our engineers will be in touch as soon as possible to discuss your project.
             If it is urgent, call{' '}
             <a
               href="tel:+441482838080"

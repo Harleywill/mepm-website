@@ -5,7 +5,11 @@ import { verifyAuth } from '@/lib/auth';
 export async function GET() {
   try {
     const payload = await verifyAuth();
-    return NextResponse.json({ ok: true, username: payload.sub });
+    return NextResponse.json({
+      ok: true,
+      username: payload.sub,
+      role: payload.role || 'viewer',
+    });
   } catch {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
