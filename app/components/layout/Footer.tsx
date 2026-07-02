@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { services } from '@/lib/services';
+import type { ServiceDTO } from '@/lib/services';
 import type { SiteSettingsDTO } from '@/lib/settings';
 
 const LOGO_REVERSED = '/assets/mepm-logo-reversed-tight.png';
@@ -14,7 +14,13 @@ const companyLinks = [
   { label: 'Contact', href: '/contact' },
 ];
 
-export default function Footer({ settings }: { settings: SiteSettingsDTO }) {
+export default function Footer({
+  settings,
+  services,
+}: {
+  settings: SiteSettingsDTO;
+  services: ServiceDTO[];
+}) {
   const socialLinks = [
     { label: 'LinkedIn', href: settings.linkedin, icon: 'fab fa-linkedin-in' },
     { label: 'Twitter', href: settings.twitter, icon: 'fab fa-twitter' },

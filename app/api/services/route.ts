@@ -2,27 +2,16 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
-import {
-  validateService,
-  parsePoints,
-  stringifyPoints,
-  isValidServiceCode,
-} from '@/lib/services';
+import { getServices, validateService, stringifyJsonArray, slugify } from '@/lib/services';
+import { logActivity } from '@/lib/activity';
 import type { Role } from '@/lib/roles';
 
-/** Public list of all services, sorted by order. */
-export async function GET(_req: Request) {
-  const services = await prisma.service.findMany({
-    orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
-  });
-
-  // Parse points arrays for response
-  return NextResponse.json({
-    services: services.map((s) => ({
-      ...s,
-      points: parsePoints(s.points),
-    })),
-  });
+/** Public list = published only. Admin (?admin=1) gets everything, including drafts. */
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const admin = searchParams.get('admin') === '1';
+  const services = await getServices(!admin);
+  return NextResponse.json({ services });
 }
 
 /** Admin: create a new service. */
@@ -41,47 +30,63 @@ export async function POST(req: Request) {
 
   const body = await req.json().catch(() => ({}));
 
-  // Validate required fields
   const validationError = validateService(body);
   if (validationError) {
     return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
   const code = String(body.code || '').toUpperCase();
-  const title = String(body.title || '').trim();
-  const desc = String(body.desc || '').trim();
 
-  // Check for duplicate code
-  const existing = await prisma.service.findUnique({ where: { code } });
-  if (existing) {
-    return NextResponse.json(
-      { error: `Service with code "${code}" already exists` },
-      { status: 400 }
-    );
+  const existingCode = await prisma.service.findUnique({ where: { code } });
+  if (existingCode) {
+    return NextResponse.json({ error: `Service with code "${code}" already exists` }, { status: 400 });
   }
 
-  const points = Array.isArray(body.points) ? body.points : [];
-  const order = Number(body.order) || 0;
+  // The admin form never sends a slug (it's auto-generated and not exposed for editing),
+  // but the API still accepts an explicit one for programmatic callers.
+  const explicitSlug = String(body.slug || '').trim();
+  let slug = explicitSlug || slugify(String(body.name || ''));
+  if (explicitSlug) {
+    const existingSlug = await prisma.service.findUnique({ where: { slug } });
+    if (existingSlug) {
+      return NextResponse.json({ error: `Service with slug "${slug}" already exists` }, { status: 400 });
+    }
+  } else {
+    const base = slug;
+    let suffix = 2;
+    while (await prisma.service.findUnique({ where: { slug } })) {
+      slug = `${base}-${suffix}`;
+      suffix += 1;
+    }
+  }
 
   const service = await prisma.service.create({
     data: {
+      slug,
       code,
-      title,
-      desc,
-      points: stringifyPoints(points),
+      name: String(body.name || '').trim(),
+      navLabel: String(body.navLabel || '').trim(),
+      shortDescription: String(body.shortDescription || '').trim(),
+      intro: String(body.intro || '').trim(),
+      keywords: stringifyJsonArray(body.keywords || []),
+      scope: stringifyJsonArray(body.scope || []),
+      deliverables: stringifyJsonArray(body.deliverables || []),
+      sustainability: String(body.sustainability || ''),
+      relatedSlugs: stringifyJsonArray(body.relatedSlugs || []),
       statValue: String(body.statValue || ''),
       statLabel: String(body.statLabel || ''),
-      order,
+      order: Number(body.order) || 0,
+      published: Boolean(body.published),
+      icon: String(body.icon || 'Zap'),
     },
   });
 
-  return NextResponse.json(
-    {
-      service: {
-        ...service,
-        points: parsePoints(service.points),
-      },
-    },
-    { status: 201 }
-  );
+  await logActivity({
+    action: 'create',
+    entityType: 'Service',
+    entityId: service.id,
+    entityLabel: service.name,
+    username: user.username,
+  });
+  return NextResponse.json({ service }, { status: 201 });
 }

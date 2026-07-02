@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuthWithUser } from '@/lib/auth';
 import { getSettings } from '@/lib/settings';
+import { logActivity } from '@/lib/activity';
 
 /** Public read — the public site needs phone, socials, stats, qualifications. */
 export async function GET() {
@@ -13,8 +14,9 @@ export async function GET() {
  * replaces the stats + qualifications lists (simple + robust for small lists).
  */
 export async function PUT(req: Request) {
+  let user;
   try {
-    await verifyAuth();
+    user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
@@ -76,6 +78,14 @@ export async function PUT(req: Request) {
     data: qualifications
       .filter((q) => (q.label ?? '').trim())
       .map((q, i) => ({ label: String(q.label).trim(), order: i })),
+  });
+
+  await logActivity({
+    action: 'update',
+    entityType: 'Settings',
+    entityId: 'main',
+    entityLabel: 'Site settings updated',
+    username: user.username,
   });
 
   return NextResponse.json(await getSettings());

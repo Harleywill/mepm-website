@@ -7,13 +7,12 @@ export const DISCIPLINE_LABELS: Record<Discipline, string> = {
   ENV: 'Environmental',
 };
 
-export const PROJECT_STATUSES = ['planned', 'in_progress', 'complete'] as const;
+export const PROJECT_STATUSES = ['draft', 'published'] as const;
 export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
 
 export const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
-  planned: 'Planned',
-  in_progress: 'In progress',
-  complete: 'Complete',
+  draft: 'Draft',
+  published: 'Published',
 };
 
 export function isProjectStatus(value: string): value is ProjectStatus {
@@ -34,15 +33,7 @@ export function disciplinesFromArray(arr: string[]): string {
   return disciplinesToArray(arr.join(',')).join(',');
 }
 
-/** Lowercase, hyphenated, url-safe slug from a title. */
-export function slugify(title: string): string {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80);
-}
+export { slugify } from './slug';
 
 /** Map a ProjectImage.storedPath (under public/) to its served URL. Pure
  *  string helper so client components can use it without node:fs. */

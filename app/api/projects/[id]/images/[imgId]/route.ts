@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
+import { logActivity } from '@/lib/activity';
 import { deleteUpload } from '@/lib/uploads';
 
 /** Admin: update an image (set cover or caption). Setting cover clears the
@@ -47,8 +48,9 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string; imgId: string }> }
 ) {
+  let user;
   try {
-    await verifyAuth();
+    user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
@@ -76,6 +78,13 @@ export async function DELETE(
   const project = await prisma.project.findUnique({
     where: { id },
     include: { images: { orderBy: { order: 'asc' } } },
+  });
+  await logActivity({
+    action: 'update',
+    entityType: 'Project',
+    entityId: id,
+    entityLabel: `${project?.title ?? id} — image removed`,
+    username: user.username,
   });
   return NextResponse.json({ project });
 }

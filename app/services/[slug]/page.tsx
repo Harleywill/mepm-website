@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { services, getService, serviceOfferings } from '@/lib/services';
+import { getServiceBySlug, getServiceOfferings } from '@/lib/services';
 import { Reveal } from '@/app/components/ui';
 import { CtaBand, ServiceHero3D } from '@/app/components/sections';
 import type { ServiceVariant } from '@/app/components/sections';
@@ -10,13 +10,11 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return services.map((service) => ({ slug: service.slug }));
-}
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = await getServiceBySlug(slug, true);
   if (!service) return {};
   return {
     title: `${service.name} — MEPM Building Services Consultants`,
@@ -26,12 +24,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ServicePage({ params }: PageProps) {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = await getServiceBySlug(slug, true);
   if (!service) notFound();
 
-  const related = service.relatedSlugs
-    .map(getService)
-    .filter((s): s is NonNullable<typeof s> => Boolean(s));
+  const relatedResults = await Promise.all(service.relatedSlugs.map((s) => getServiceBySlug(s, true)));
+  const related = relatedResults.filter((s): s is NonNullable<typeof s> => Boolean(s));
+
+  const offerings = await getServiceOfferings();
 
   return (
     <>
@@ -145,8 +144,8 @@ export default async function ServicePage({ params }: PageProps) {
             </p>
           </Reveal>
           <div className="grid gap-x-12 md:grid-cols-2">
-            {Object.entries(serviceOfferings).map(([key, offering], i) => (
-              <Reveal key={key} delay={(i % 2) * 0.08}>
+            {offerings.map((offering, i) => (
+              <Reveal key={offering.slug} delay={(i % 2) * 0.08}>
                 <div className="border-t border-slate-300 py-7 grid grid-cols-[64px_1fr] gap-5">
                   <span className="font-mono text-sm font-medium text-green-700 pt-0.5">
                     SVC-{String(i + 1).padStart(2, '0')}

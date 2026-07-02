@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import type { SiteSettingsDTO } from '@/lib/settings';
+import type { ServiceDTO } from '@/lib/services';
 import Header from './Header';
 import Footer from './Footer';
 
@@ -12,9 +13,11 @@ import Footer from './Footer';
 export default function SiteChrome({
   children,
   settings,
+  services,
 }: {
   children: React.ReactNode;
   settings: SiteSettingsDTO;
+  services: ServiceDTO[];
 }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/admin');
@@ -25,9 +28,9 @@ export default function SiteChrome({
 
   return (
     <>
-      <Header settings={settings} />
+      <Header settings={settings} services={services} />
       <main className="flex-1">{children}</main>
-      <Footer settings={settings} />
+      <Footer settings={settings} services={services} />
     </>
   );
 }

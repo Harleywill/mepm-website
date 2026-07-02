@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import type { Role } from '@/lib/roles';
+import { parseJsonArray } from '@/lib/services';
+import type { ServiceScopeItem } from '@/lib/services';
 
 /**
  * GET /api/export
@@ -31,6 +33,7 @@ export async function GET(_req: Request) {
       projects,
       enquiries,
       services,
+      serviceOfferings,
       team,
       testimonials,
       accreditations,
@@ -46,6 +49,9 @@ export async function GET(_req: Request) {
         orderBy: { createdAt: 'desc' },
       }),
       prisma.service.findMany({
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+      }),
+      prisma.serviceOffering.findMany({
         orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
       }),
       prisma.team.findMany({
@@ -130,29 +136,39 @@ export async function GET(_req: Request) {
       })),
     }));
 
-    // Transform services: parse points JSON string
+    // Transform services: parse JSON array fields
     const servicesForExport = services.map((service) => {
-      let points: string[] = [];
-      if (service.points) {
-        try {
-          points = JSON.parse(service.points);
-          if (!Array.isArray(points)) points = [];
-        } catch {
-          points = [];
-        }
-      }
-
       return {
         id: service.id,
+        slug: service.slug,
         code: service.code,
-        title: service.title,
-        desc: service.desc,
-        points,
+        name: service.name,
+        navLabel: service.navLabel,
+        shortDescription: service.shortDescription,
+        intro: service.intro,
+        keywords: parseJsonArray<string>(service.keywords),
+        scope: parseJsonArray<ServiceScopeItem>(service.scope),
+        deliverables: parseJsonArray<string>(service.deliverables),
+        sustainability: service.sustainability,
+        relatedSlugs: parseJsonArray<string>(service.relatedSlugs),
         statValue: service.statValue,
         statLabel: service.statLabel,
         order: service.order,
+        published: service.published,
+        icon: service.icon,
       };
     });
+
+    // Transform service offerings (delivery lines)
+    const serviceOfferingsForExport = serviceOfferings.map((offering) => ({
+      id: offering.id,
+      slug: offering.slug,
+      name: offering.name,
+      shortDescription: offering.shortDescription,
+      description: offering.description,
+      keywords: parseJsonArray<string>(offering.keywords),
+      order: offering.order,
+    }));
 
     // Transform team
     const teamForExport = team.map((member) => ({
@@ -193,6 +209,7 @@ export async function GET(_req: Request) {
       projects: projectsForExport,
       enquiries: enquiriesForExport,
       services: servicesForExport,
+      serviceOfferings: serviceOfferingsForExport,
       team: teamForExport,
       testimonials: testimonialsForExport,
       accreditations: accreditationsForExport,

@@ -7,3 +7,4 @@ export { Field } from './Field';
 export { Modal } from './Modal';
 export { PageHeader } from './PageHeader';
 export { useToast } from './Toast';
+export { SortableList } from './SortableList';

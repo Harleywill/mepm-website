@@ -1,8 +1,10 @@
 import Link from 'next/link';
-import { services } from '@/lib/services';
+import { getServices } from '@/lib/services';
 import { Reveal } from '../ui';
 
-export default function ServicesOverview() {
+export default async function ServicesOverview() {
+  const services = await getServices(true);
+
   return (
     <section className="max-w-7xl mx-auto px-6 py-24">
       <Reveal>

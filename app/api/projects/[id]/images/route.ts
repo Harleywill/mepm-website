@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuthWithUser } from '@/lib/auth';
+import { logActivity } from '@/lib/activity';
 import { saveUpload, validateFiles, IMAGE_DOC_TYPES } from '@/lib/uploads';
 
 /** Admin: upload one or more images to a project. */
@@ -8,8 +9,9 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let user;
   try {
-    await verifyAuth();
+    user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
@@ -56,5 +58,14 @@ export async function POST(
     where: { id },
     include: { images: { orderBy: { order: 'asc' } } },
   });
+  if (files.length > 0) {
+    await logActivity({
+      action: 'update',
+      entityType: 'Project',
+      entityId: id,
+      entityLabel: `${project.title} — ${files.length} image${files.length === 1 ? '' : 's'} added`,
+      username: user.username,
+    });
+  }
   return NextResponse.json({ project: updated });
 }

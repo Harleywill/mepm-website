@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { validateFiles, saveUpload, deleteUpload, IMAGE_DOC_TYPES } from '@/lib/uploads';
+import { logActivity } from '@/lib/activity';
 import type { Role } from '@/lib/roles';
 
 /** Admin: get one testimonial. */
@@ -117,6 +118,14 @@ export async function PATCH(
     data,
   });
 
+  await logActivity({
+    action: 'update',
+    entityType: 'Testimonial',
+    entityId: updated.id,
+    entityLabel: updated.author,
+    username: user.username,
+  });
+
   return NextResponse.json({ testimonial: updated });
 }
 
@@ -149,5 +158,12 @@ export async function DELETE(
   }
 
   await prisma.testimonial.delete({ where: { id } });
+  await logActivity({
+    action: 'delete',
+    entityType: 'Testimonial',
+    entityId: testimonial.id,
+    entityLabel: testimonial.author,
+    username: user.username,
+  });
   return NextResponse.json({ ok: true });
 }

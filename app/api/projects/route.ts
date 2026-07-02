@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
+import { logActivity } from '@/lib/activity';
 import {
   slugify,
   disciplinesFromArray,
@@ -32,7 +33,10 @@ export async function GET(req: Request) {
 
 /** Admin: create a project. */
 export async function POST(req: Request) {
-  if (!(await isAdmin())) {
+  let user;
+  try {
+    user = await verifyAuthWithUser();
+  } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
   const body = await req.json().catch(() => ({}));
@@ -49,7 +53,7 @@ export async function POST(req: Request) {
     slug = `${base}-${n++}`;
   }
 
-  const status = isProjectStatus(String(body.status)) ? body.status : 'complete';
+  const status = isProjectStatus(String(body.status)) ? body.status : 'draft';
 
   const project = await prisma.project.create({
     data: {
@@ -67,6 +71,13 @@ export async function POST(req: Request) {
       published: Boolean(body.published),
     },
     include: { images: true },
+  });
+  await logActivity({
+    action: 'create',
+    entityType: 'Project',
+    entityId: project.id,
+    entityLabel: project.title,
+    username: user.username,
   });
   return NextResponse.json({ project });
 }

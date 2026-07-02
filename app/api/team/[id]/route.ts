@@ -4,6 +4,7 @@ import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { isValidDiscipline } from '@/lib/team';
 import { validateFiles, saveUpload, deleteUpload, IMAGE_DOC_TYPES } from '@/lib/uploads';
+import { logActivity } from '@/lib/activity';
 import type { Role } from '@/lib/roles';
 
 /** Admin: get one team member. */
@@ -75,6 +76,13 @@ export async function PATCH(
     if (!role) {
       return NextResponse.json({ error: 'Role cannot be empty' }, { status: 400 });
     }
+    // Only administrators can change the role
+    if (role !== member.role && user.role !== 'administrator') {
+      return NextResponse.json(
+        { error: 'Only administrators can change member roles' },
+        { status: 403 }
+      );
+    }
     data.role = role;
   }
 
@@ -128,6 +136,14 @@ export async function PATCH(
     data,
   });
 
+  await logActivity({
+    action: 'update',
+    entityType: 'Team',
+    entityId: updated.id,
+    entityLabel: updated.name,
+    username: user.username,
+  });
+
   return NextResponse.json({ member: updated });
 }
 
@@ -160,5 +176,12 @@ export async function DELETE(
   }
 
   await prisma.team.delete({ where: { id } });
+  await logActivity({
+    action: 'delete',
+    entityType: 'Team',
+    entityId: member.id,
+    entityLabel: member.name,
+    username: user.username,
+  });
   return NextResponse.json({ ok: true });
 }

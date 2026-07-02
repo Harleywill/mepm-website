@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight, ChevronDown, Phone, Mail } from 'lucide-react';
 import { Button } from '../ui';
-import { services } from '@/lib/services';
+import type { ServiceDTO } from '@/lib/services';
 import type { SiteSettingsDTO } from '@/lib/settings';
 
 const LOGO = '/assets/mepm-logo-tight.png';
@@ -15,14 +15,20 @@ const LOGO = '/assets/mepm-logo-tight.png';
 // Turn a display phone like "01482 838080" into a tel: href.
 const telHref = (phone: string) => `tel:${phone.replace(/[^+\d]/g, '')}`;
 
-const navLinks = [
-  { label: 'Home', href: '/' },
-  { label: 'Services', href: '/services', children: services },
-  { label: 'Projects', href: '/projects' },
-  { label: 'Contact', href: '/contact' },
-];
+export default function Header({
+  settings,
+  services,
+}: {
+  settings: SiteSettingsDTO;
+  services: ServiceDTO[];
+}) {
+  const navLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'Services', href: '/services', children: services },
+    { label: 'Projects', href: '/projects' },
+    { label: 'Contact', href: '/contact' },
+  ];
 
-export default function Header({ settings }: { settings: SiteSettingsDTO }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);

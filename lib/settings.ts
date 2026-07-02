@@ -56,11 +56,17 @@ export const DEFAULT_STATS: StatDTO[] = [
 /** Read settings, stats and qualifications. Server-only (uses Prisma).
  *  Falls back to defaults if the singleton row is missing. */
 export async function getSettings(): Promise<FullSettings> {
-  const [row, stats, qualifications] = await Promise.all([
-    prisma.siteSettings.findUnique({ where: { id: 'main' } }),
-    prisma.stat.findMany({ orderBy: { order: 'asc' } }),
-    prisma.qualification.findMany({ orderBy: { order: 'asc' } }),
-  ]);
+  let row, stats, qualifications;
+  try {
+    [row, stats, qualifications] = await Promise.all([
+      prisma.siteSettings.findUnique({ where: { id: 'main' } }),
+      prisma.stat.findMany({ orderBy: { order: 'asc' } }),
+      prisma.qualification.findMany({ orderBy: { order: 'asc' } }),
+    ]);
+  } catch (error) {
+    console.error('getSettings: database query failed', error);
+    return { settings: DEFAULT_SETTINGS, stats: DEFAULT_STATS, qualifications: [] };
+  }
 
   const settings: SiteSettingsDTO = row
     ? {

@@ -1,8 +1,18 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { services } from '@/lib/services';
+import {
+  Zap, Wind, Thermometer, Droplet, Leaf, Sun,
+  Flame, Snowflake, Wrench, Gauge, Building2, Recycle,
+} from 'lucide-react';
+import { getServices } from '@/lib/services';
 import { Reveal } from '@/app/components/ui';
 import { CtaBand } from '@/app/components/sections';
+
+// Matches the curated set in app/admin/services/ServiceForm.tsx.
+const SERVICE_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  Zap, Wind, Thermometer, Droplet, Leaf, Sun,
+  Flame, Snowflake, Wrench, Gauge, Building2, Recycle,
+};
 
 export const metadata: Metadata = {
   title: 'Services — MEPM Building Services Consultants',
@@ -10,7 +20,12 @@ export const metadata: Metadata = {
     'Electrical, mechanical and environmental engineering consultancy. Multi-disciplinary building services design from a single Hull-based team.',
 };
 
-export default function ServicesPage() {
+// Always reflect the latest published services.
+export const dynamic = 'force-dynamic';
+
+export default async function ServicesPage() {
+  const services = await getServices(true);
+
   return (
     <>
       <section className="bp-grid-light border-b border-slate-200">
@@ -25,12 +40,17 @@ export default function ServicesPage() {
 
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid gap-6 md:grid-cols-3">
-          {services.map((service, i) => (
+          {services.map((service, i) => {
+            const ServiceIcon = SERVICE_ICONS[service.icon] ?? Zap;
+            return (
             <Reveal key={service.slug} delay={i * 0.08} className="h-full">
               <Link
                 href={`/services/${service.slug}`}
                 className="group flex flex-col h-full border border-slate-200 rounded-lg p-8 hover:border-navy-300 hover:shadow-md transition-all duration-200"
               >
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-md bg-navy-50 text-navy-700 group-hover:bg-navy-700 group-hover:text-white transition-colors">
+                  <ServiceIcon size={22} />
+                </div>
                 <span className="font-mono text-sm font-semibold text-green-700 mb-5">
                   {service.code}
                 </span>
@@ -50,7 +70,8 @@ export default function ServicesPage() {
                 </span>
               </Link>
             </Reveal>
-          ))}
+            );
+          })}
         </div>
       </section>
 

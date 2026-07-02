@@ -4,6 +4,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./globals.css";
 import SiteChrome from "./components/layout/SiteChrome";
 import { getSettings } from "@/lib/settings";
+import { getServices } from "@/lib/services";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -40,13 +41,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { settings } = await getSettings();
+  const services = await getServices(true).catch(() => []);
   return (
     <html
       lang="en"
       className={`scroll-smooth ${archivo.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
     >
       <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased font-body">
-        <SiteChrome settings={settings}>{children}</SiteChrome>
+        <SiteChrome settings={settings} services={services}>{children}</SiteChrome>
       </body>
     </html>
   );

@@ -63,9 +63,9 @@ export default function AdminLoginPage() {
         <Image
           src="/mepm-logo.png"
           alt="MEPM"
-          width={120}
-          height={34}
-          style={{ height: '34px', width: 'auto', position: 'relative' }}
+          width={710}
+          height={308}
+          style={{ height: '52px', width: 'auto', position: 'relative' }}
           priority
         />
 

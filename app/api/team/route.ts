@@ -4,6 +4,7 @@ import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { validateTeamMember, isValidDiscipline } from '@/lib/team';
 import { validateFiles, saveUpload, IMAGE_DOC_TYPES } from '@/lib/uploads';
+import { logActivity } from '@/lib/activity';
 import type { Role } from '@/lib/roles';
 
 /** Public list of all team members. */
@@ -51,6 +52,14 @@ export async function POST(req: Request) {
     );
   }
 
+  // Only administrators can set the role field
+  if (user.role !== 'administrator') {
+    return NextResponse.json(
+      { error: 'Only administrators can create members with roles' },
+      { status: 403 }
+    );
+  }
+
   // Check for duplicate name
   const existing = await prisma.team.findUnique({ where: { name } });
   if (existing) {
@@ -88,5 +97,12 @@ export async function POST(req: Request) {
     },
   });
 
+  await logActivity({
+    action: 'create',
+    entityType: 'Team',
+    entityId: member.id,
+    entityLabel: member.name,
+    username: user.username,
+  });
   return NextResponse.json({ member }, { status: 201 });
 }

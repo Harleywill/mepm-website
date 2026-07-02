@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Plus, Trash2, Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Plus, Trash2, Check, Download, Upload } from 'lucide-react';
 import type {
   SiteSettingsDTO,
   StatDTO,
@@ -38,6 +38,19 @@ export default function AdminSettingsPage() {
   const [quals, setQuals] = useState<QualRow[]>([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [content, setContent] = useState<{
+    projects: number;
+    enquiries: number;
+    testimonials: number;
+    team: number;
+  } | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<Record<
+    string,
+    { imported: number; skipped: number; errors: string[] }
+  > | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch('/api/settings')
@@ -52,6 +65,25 @@ export default function AdminSettingsPage() {
         );
         setQuals((d.qualifications as QualificationDTO[]).map((q) => ({ label: q.label })));
       });
+
+    // Fetch content counts
+    Promise.all([
+      fetch('/api/projects?admin=1').then((r) => r.json()),
+      fetch('/api/enquiries').then((r) => r.json()),
+      fetch('/api/testimonials').then((r) => r.json()),
+      fetch('/api/team').then((r) => r.json()),
+    ]).then(([projects, enquiries, testimonials, team]) => {
+      const projectsData = Array.isArray(projects) ? projects : projects.projects || [];
+      const enquiriesData = Array.isArray(enquiries) ? enquiries : enquiries.enquiries || [];
+      const testimonialsData = Array.isArray(testimonials) ? testimonials : testimonials.testimonials || [];
+      const teamData = Array.isArray(team) ? team : team.team || [];
+      setContent({
+        projects: projectsData.length,
+        enquiries: enquiriesData.length,
+        testimonials: testimonialsData.length,
+        team: teamData.length,
+      });
+    });
   }, []);
 
   const set = (k: keyof SiteSettingsDTO) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -78,9 +110,203 @@ export default function AdminSettingsPage() {
 
   if (!settings) return <p className="mepm-spec text-slate-400">Loading…</p>;
 
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const res = await fetch('/api/export');
+      if (!res.ok) throw new Error('Export failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mepm-export-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert('Export failed. Please try again.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleImportClick = () => fileInputRef.current?.click();
+
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setImporting(true);
+    setImportResult(null);
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const res = await fetch('/api/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || 'Import failed');
+      setImportResult(json.results);
+    } catch (err) {
+      setImportResult({
+        error: { imported: 0, skipped: 0, errors: [err instanceof Error ? err.message : 'Import failed. Check the file is a valid export JSON.'] },
+      });
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const handleResetData = () => {
+    if (window.confirm('Reset all demo data? This will clear all content and restore defaults.')) {
+      fetch('/api/reset', { method: 'POST' }).then(() => {
+        window.location.reload();
+      });
+    }
+  };
+
   return (
     <div className="max-w-3xl">
       <h1 className="mepm-h2 mb-8 text-navy-700">Settings</h1>
+
+      {/* Content overview */}
+      {content && (
+        <Section title="Content overview" hint="What's currently in the CMS.">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: 'var(--navy-800)' }}>
+                {content.projects}
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--slate-500)', textTransform: 'uppercase', marginTop: 4 }}>
+                Projects
+              </div>
+            </div>
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: 'var(--navy-800)' }}>
+                {content.enquiries}
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--slate-500)', textTransform: 'uppercase', marginTop: 4 }}>
+                Enquiries
+              </div>
+            </div>
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: 'var(--navy-800)' }}>
+                {content.testimonials}
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--slate-500)', textTransform: 'uppercase', marginTop: 4 }}>
+                Testimonials
+              </div>
+            </div>
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: 'var(--navy-800)' }}>
+                {content.team}
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--slate-500)', textTransform: 'uppercase', marginTop: 4 }}>
+                Team members
+              </div>
+            </div>
+          </div>
+        </Section>
+      )}
+
+      {/* Export section */}
+      <Section title="Export" hint="Download all content — projects, services, team, testimonials and more — as a single JSON backup.">
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '10px 16px',
+            borderRadius: 'var(--radius-md)',
+            border: 'none',
+            background: '#68B830',
+            color: '#fff',
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: 'pointer',
+            opacity: exporting ? 0.6 : 1,
+          }}
+        >
+          <Download size={16} />
+          {exporting ? 'Exporting…' : 'Export content'}
+        </button>
+      </Section>
+
+      {/* Import section */}
+      <Section title="Import" hint="Restore content from a backup JSON file. Existing records are matched by id and updated; new ones are added. Nothing is deleted, and admin accounts are never imported.">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/json"
+          onChange={handleImportFile}
+          style={{ display: 'none' }}
+        />
+        <button
+          onClick={handleImportClick}
+          disabled={importing}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '10px 16px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border)',
+            background: '#fff',
+            color: 'var(--navy-700)',
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: 'pointer',
+            opacity: importing ? 0.6 : 1,
+          }}
+        >
+          <Upload size={16} />
+          {importing ? 'Importing…' : 'Choose file to import'}
+        </button>
+
+        {importResult && (
+          <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {Object.entries(importResult).map(([key, summary]) => (
+              <div key={key} style={{ fontSize: 13, color: 'var(--slate-600)' }}>
+                <strong style={{ color: 'var(--navy-700)', textTransform: 'capitalize' }}>{key}</strong>
+                {': '}
+                {summary.imported} imported, {summary.skipped} skipped
+                {summary.errors.length > 0 && (
+                  <ul style={{ margin: '4px 0 0 18px', color: '#D14343' }}>
+                    {summary.errors.map((err, i) => (
+                      <li key={i}>{err}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </Section>
+
+      {/* Reset data section */}
+      <Section title="Reset demo data" hint="Warning: this action clears all content and restores sample data. Use with caution.">
+        <button
+          onClick={handleResetData}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '10px 16px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid rgba(209, 67, 67, 0.3)',
+            background: 'transparent',
+            color: '#D14343',
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: 'pointer',
+          }}
+        >
+          Reset to sample data
+        </button>
+      </Section>
 
       <Section title="Contact details">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -119,79 +345,6 @@ export default function AdminSettingsPage() {
         </div>
       </Section>
 
-      <Section
-        title="Stat strip"
-        hint="The big numbers in the navy band on the homepage. Type the figure exactly as it should appear — e.g. 29, −40%, 98% or 480+ — and a label underneath it."
-        onAdd={() => setStats((p) => [...p, { figure: '', label: '' }])}
-      >
-        <div className="space-y-3">
-          {stats.length > 0 && (
-            <div className="flex items-center gap-3 px-1">
-              <span className="w-32 font-mono text-[11px] uppercase tracking-[0.06em] text-slate-400">
-                Figure
-              </span>
-              <span className="flex-1 font-mono text-[11px] uppercase tracking-[0.06em] text-slate-400">
-                Label
-              </span>
-              <span className="w-44 font-mono text-[11px] uppercase tracking-[0.06em] text-slate-400">
-                Preview
-              </span>
-              <span className="w-8" />
-            </div>
-          )}
-          {stats.map((s, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <input
-                value={s.figure}
-                onChange={(e) => setStats((p) => p.map((x, j) => (j === i ? { ...x, figure: e.target.value } : x)))}
-                className={`${input} w-32`}
-                placeholder="29"
-                aria-label="Figure"
-              />
-              <input
-                value={s.label}
-                onChange={(e) => setStats((p) => p.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))}
-                className={`${input} flex-1`}
-                placeholder="Years in practice"
-                aria-label="Label"
-              />
-              {/* Live preview of how this stat renders in the navy band */}
-              <div className="flex w-44 items-center gap-2.5 rounded-md bg-navy-900 px-3 py-2">
-                <span className="font-display text-xl font-extrabold leading-none text-white">
-                  {s.figure || '—'}
-                </span>
-                <span className="truncate text-[11px] leading-tight text-white/70">
-                  {s.label || 'label'}
-                </span>
-              </div>
-              <RemoveButton onClick={() => setStats((p) => p.filter((_, j) => j !== i))} />
-            </div>
-          ))}
-          {stats.length === 0 && <Empty>No stats. Add one above.</Empty>}
-        </div>
-      </Section>
-
-      <Section
-        title="Qualifications"
-        hint="Credentials/memberships shown as chips in the stat strip band."
-        onAdd={() => setQuals((p) => [...p, { label: '' }])}
-      >
-        <div className="space-y-3">
-          {quals.map((q, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <input
-                value={q.label}
-                onChange={(e) => setQuals((p) => p.map((x, j) => (j === i ? { label: e.target.value } : x)))}
-                className={`${input} flex-1`}
-                placeholder="e.g. CIBSE Member, CEng, IET"
-                aria-label="Qualification"
-              />
-              <RemoveButton onClick={() => setQuals((p) => p.filter((_, j) => j !== i))} />
-            </div>
-          ))}
-          {quals.length === 0 && <Empty>No qualifications yet. Add one above.</Empty>}
-        </div>
-      </Section>
 
       <div className="sticky bottom-0 -mx-6 flex items-center gap-3 border-t border-slate-200 bg-slate-50/90 px-6 py-4 backdrop-blur">
         <button

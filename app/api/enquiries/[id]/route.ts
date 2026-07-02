@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { verifyAuth } from '@/lib/auth';
+import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
+import { logActivity } from '@/lib/activity';
 import { deleteUpload } from '@/lib/uploads';
 import { isEnquiryStatus } from '@/lib/enquiries';
 
@@ -32,8 +33,9 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let user;
   try {
-    await requireAuth();
+    user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
@@ -47,6 +49,13 @@ export async function PATCH(
     where: { id },
     data: { status },
   });
+  await logActivity({
+    action: 'update',
+    entityType: 'Enquiry',
+    entityId: enquiry.id,
+    entityLabel: `${enquiry.name} — marked ${status}`,
+    username: user.username,
+  });
   return NextResponse.json({ enquiry });
 }
 
@@ -55,8 +64,9 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let user;
   try {
-    await requireAuth();
+    user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
@@ -69,5 +79,12 @@ export async function DELETE(
 
   await Promise.all(enquiry.attachments.map((a) => deleteUpload(a.storedPath)));
   await prisma.enquiry.delete({ where: { id } });
+  await logActivity({
+    action: 'delete',
+    entityType: 'Enquiry',
+    entityId: enquiry.id,
+    entityLabel: enquiry.name,
+    username: user.username,
+  });
   return NextResponse.json({ ok: true });
 }

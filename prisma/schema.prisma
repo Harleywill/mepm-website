@@ -109,16 +109,37 @@ model Qualification {
 }
 
 model Service {
-  id        String   @id @default(cuid())
-  code      String   @unique // ELE | MEC | ENV
-  title     String
-  desc      String
-  points    String   @default("") // JSON array of strings, stored as string
-  statValue String   @default("")
-  statLabel String   @default("")
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String   @id @default(cuid())
+  slug             String   @unique // electrical | mechanical | environmental
+  code             String   @unique // ELE | MEC | ENV
+  name             String
+  navLabel         String
+  shortDescription String
+  intro            String
+  keywords         String   @default("[]") // JSON array of strings
+  scope            String   @default("[]") // JSON array of {title, description}
+  deliverables     String   @default("[]") // JSON array of strings
+  sustainability   String   @default("")
+  relatedSlugs     String   @default("[]") // JSON array of service slugs
+  statValue        String   @default("")
+  statLabel        String   @default("")
+  order            Int      @default(0)
+  published        Boolean  @default(true)
+  icon             String   @default("Zap") // lucide-react icon name
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ServiceOffering {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  shortDescription String
+  description      String
+  keywords         String   @default("[]") // JSON array of strings
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model Testimonial {
@@ -148,4 +169,18 @@ model Accreditation {
   id    String @id @default(cuid())
   label String // e.g., "CIBSE", "ISO 9001"
   order Int    @default(0)
+}
+
+// Append-only audit trail of admin content changes. Denormalized (username,
+// not a relation to AdminUser) so history survives the user account being deleted.
+model ActivityLog {
+  id          String   @id @default(cuid())
+  action      String   // create | update | delete
+  entityType  String   // Project | Service | Team | ...
+  entityId    String
+  entityLabel String
+  username    String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
 }
