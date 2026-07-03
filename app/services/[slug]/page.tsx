@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getServiceBySlug, getServiceOfferings } from '@/lib/services';
+import { getServices, getServiceBySlug, getServiceOfferings } from '@/lib/services';
 import { Reveal } from '@/app/components/ui';
 import { CtaBand, ServiceHero3D } from '@/app/components/sections';
 import type { ServiceVariant } from '@/app/components/sections';
@@ -10,7 +10,12 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const dynamic = 'force-dynamic';
+/** Prerender all published services at build time; slugs created later
+ *  render on demand (dynamicParams) and are then cached until revalidated. */
+export async function generateStaticParams() {
+  const services = await getServices(true);
+  return services.map((s) => ({ slug: s.slug }));
+}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

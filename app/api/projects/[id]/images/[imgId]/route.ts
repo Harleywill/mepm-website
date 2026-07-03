@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import { deleteUpload } from '@/lib/uploads';
 
 /** Admin: update an image (set cover or caption). Setting cover clears the
@@ -79,6 +80,7 @@ export async function DELETE(
     where: { id },
     include: { images: { orderBy: { order: 'asc' } } },
   });
+  revalidatePublicSite();
   await logActivity({
     action: 'update',
     entityType: 'Project',

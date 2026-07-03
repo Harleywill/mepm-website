@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
@@ -10,8 +11,6 @@ import {
   PROJECT_STATUS_LABELS,
 } from '@/lib/projects';
 
-export const dynamic = 'force-dynamic';
-
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
@@ -21,6 +20,16 @@ async function getProject(slug: string) {
     where: { slug, published: true },
     include: { images: { orderBy: { order: 'asc' } } },
   });
+}
+
+/** Prerender all published projects at build time; slugs created later
+ *  render on demand (dynamicParams) and are then cached until revalidated. */
+export async function generateStaticParams() {
+  const projects = await prisma.project.findMany({
+    where: { published: true },
+    select: { slug: true },
+  });
+  return projects.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -80,10 +89,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               {cover && (
                 <div className="mt-8 flex max-h-[480px] items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
                   {/* Drawings vary in aspect; contain so the full sheet shows. */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={imageUrl(cover.storedPath)}
                     alt={cover.caption ?? project.title}
+                    width={1600}
+                    height={480}
                     className="max-h-[480px] w-full object-contain"
                   />
                 </div>
@@ -135,10 +145,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   key={img.id}
                   className="overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={imageUrl(img.storedPath)}
                     alt={img.caption ?? project.title}
+                    width={800}
+                    height={224}
                     className="h-56 w-full object-contain"
                   />
                   {img.caption && (

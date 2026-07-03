@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import { deleteUpload } from '@/lib/uploads';
 import { isEnquiryStatus } from '@/lib/enquiries';
 
@@ -49,6 +50,7 @@ export async function PATCH(
     where: { id },
     data: { status },
   });
+  revalidatePublicSite();
   await logActivity({
     action: 'update',
     entityType: 'Enquiry',
@@ -79,6 +81,7 @@ export async function DELETE(
 
   await Promise.all(enquiry.attachments.map((a) => deleteUpload(a.storedPath)));
   await prisma.enquiry.delete({ where: { id } });
+  revalidatePublicSite();
   await logActivity({
     action: 'delete',
     entityType: 'Enquiry',

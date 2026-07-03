@@ -5,6 +5,7 @@ import { can, forbidden } from '@/lib/permissions';
 import { validateTestimonial } from '@/lib/testimonials';
 import { validateFiles, saveUpload, IMAGE_DOC_TYPES } from '@/lib/uploads';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import type { Role } from '@/lib/roles';
 
 /** Public list of all testimonials. */
@@ -81,6 +82,7 @@ export async function POST(req: Request) {
     },
   });
 
+  revalidatePublicSite();
   await logActivity({
     action: 'create',
     entityType: 'Testimonial',

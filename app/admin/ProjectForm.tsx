@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Plus, Trash2, UploadCloud, Image as ImageIcon, Star, X, Check } from 'lucide-react';
 import {
@@ -305,9 +306,11 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
                     className="group relative overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
                     style={{ height: 110 }}
                   >
-                    <img
+                    <NextImage
                       src={imageUrl(img.storedPath)}
                       alt={img.caption ?? ''}
+                      width={220}
+                      height={110}
                       className="h-full w-full object-cover"
                     />
                     {img.isCover && (

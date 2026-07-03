@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Plus, Pencil, Trash2, Star, Image as ImageIcon } from 'lucide-react';
@@ -191,10 +192,11 @@ export default function AdminProjectsPage() {
                 {/* Hero Image */}
                 <div className="relative h-40 bg-slate-100 flex items-center justify-center overflow-hidden">
                   {cover ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={imageUrl(cover.storedPath)}
                       alt=""
+                      width={320}
+                      height={160}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                   ) : (

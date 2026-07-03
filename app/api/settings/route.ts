@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
 import { getSettings } from '@/lib/settings';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 
 /** Public read — the public site needs phone, socials, stats, qualifications. */
 export async function GET() {
@@ -80,6 +81,7 @@ export async function PUT(req: Request) {
       .map((q, i) => ({ label: String(q.label).trim(), order: i })),
   });
 
+  revalidatePublicSite();
   await logActivity({
     action: 'update',
     entityType: 'Settings',

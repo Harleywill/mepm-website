@@ -4,6 +4,7 @@ import path from 'node:path';
 import { prisma } from '@/lib/db';
 import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import { disciplinesFromArray, isProjectStatus } from '@/lib/projects';
 
 async function requireAuth() {
@@ -64,6 +65,7 @@ export async function PATCH(
     data,
     include: { images: { orderBy: { order: 'asc' } } },
   });
+  revalidatePublicSite();
   await logActivity({
     action: 'update',
     entityType: 'Project',
@@ -95,6 +97,7 @@ export async function DELETE(
     force: true,
   }).catch(() => {});
   await prisma.project.delete({ where: { id } });
+  revalidatePublicSite();
   await logActivity({
     action: 'delete',
     entityType: 'Project',

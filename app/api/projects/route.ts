@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import {
   slugify,
   disciplinesFromArray,
@@ -72,6 +73,7 @@ export async function POST(req: Request) {
     },
     include: { images: true },
   });
+  revalidatePublicSite();
   await logActivity({
     action: 'create',
     entityType: 'Project',

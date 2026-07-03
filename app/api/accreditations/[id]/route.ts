@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import type { Role } from '@/lib/roles';
 
 export async function DELETE(
@@ -27,6 +28,7 @@ export async function DELETE(
     where: { id },
   });
 
+  revalidatePublicSite();
   await logActivity({
     action: 'delete',
     entityType: 'Accreditation',

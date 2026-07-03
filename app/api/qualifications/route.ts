@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
+import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 
 export async function GET() {
   try {
-    const settings = await prisma.siteSettings.findUnique({
-      where: { id: 'main' },
+    const qualifications = await prisma.qualification.findMany({
+      orderBy: { order: 'asc' },
     });
-    const qualifications = settings?.qualifications || [];
     return NextResponse.json({ qualifications });
   } catch (error) {
     console.error('Failed to fetch qualifications:', error);
@@ -15,26 +16,40 @@ export async function GET() {
   }
 }
 
+/** Admin: replace the full qualifications list (same replace-all pattern as /api/site-stats). */
 export async function POST(request: NextRequest) {
+  let user;
   try {
-    await verifyAuthWithUser();
+    user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
   try {
-    const qualifications = await request.json();
+    const body = await request.json();
+    const incoming: Array<{ label?: string }> = Array.isArray(body) ? body : [];
 
-    const updated = await prisma.siteSettings.upsert({
-      where: { id: 'main' },
-      update: { qualifications },
-      create: { id: 'main', qualifications },
+    await prisma.qualification.deleteMany({});
+    await prisma.qualification.createMany({
+      data: incoming
+        .filter((q) => (q.label ?? '').trim())
+        .map((q, i) => ({ label: String(q.label).trim(), order: i })),
     });
 
-    return NextResponse.json({
-      ok: true,
-      qualifications: updated.qualifications || [],
+    const qualifications = await prisma.qualification.findMany({
+      orderBy: { order: 'asc' },
     });
+
+    revalidatePublicSite();
+    await logActivity({
+      action: 'update',
+      entityType: 'Qualification',
+      entityId: 'bulk',
+      entityLabel: `Qualifications updated (${qualifications.length})`,
+      username: user.username,
+    });
+
+    return NextResponse.json({ ok: true, qualifications });
   } catch (error) {
     console.error('Failed to save qualifications:', error);
     return NextResponse.json({ ok: false, error: 'Failed to save' }, { status: 500 });

@@ -40,8 +40,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { settings } = await getSettings();
-  const services = await getServices(true).catch(() => []);
+  const [{ settings }, services] = await Promise.all([
+    getSettings(),
+    getServices(true).catch(() => []),
+  ]);
   return (
     <html
       lang="en"

@@ -14,8 +14,6 @@ export const metadata: Metadata = {
 };
 
 // Always reflect the latest published projects.
-export const dynamic = 'force-dynamic';
-
 export default async function ProjectsPage() {
   const projects = await prisma.project.findMany({
     where: { published: true },

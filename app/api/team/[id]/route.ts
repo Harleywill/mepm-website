@@ -5,6 +5,7 @@ import { can, forbidden } from '@/lib/permissions';
 import { isValidDiscipline } from '@/lib/team';
 import { validateFiles, saveUpload, deleteUpload, IMAGE_DOC_TYPES } from '@/lib/uploads';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import type { Role } from '@/lib/roles';
 
 /** Admin: get one team member. */
@@ -136,6 +137,7 @@ export async function PATCH(
     data,
   });
 
+  revalidatePublicSite();
   await logActivity({
     action: 'update',
     entityType: 'Team',
@@ -176,6 +178,7 @@ export async function DELETE(
   }
 
   await prisma.team.delete({ where: { id } });
+  revalidatePublicSite();
   await logActivity({
     action: 'delete',
     entityType: 'Team',

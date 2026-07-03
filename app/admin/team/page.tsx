@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { getTeam, deleteTeamMember } from '@/lib/mepm-api';
 import { SortableList } from '@/components/admin';
@@ -134,14 +135,12 @@ export default function TeamPage() {
                   </div>
                 )}
                 {m.photo ? (
-                  <img
+                  <Image
                     src={m.photo}
                     alt={m.name}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
+                    fill
+                    sizes="240px"
+                    style={{ objectFit: 'cover' }}
                   />
                 ) : (
                   <div

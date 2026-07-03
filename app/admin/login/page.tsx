@@ -65,7 +65,7 @@ export default function AdminLoginPage() {
           alt="MEPM"
           width={710}
           height={308}
-          style={{ height: '52px', width: 'auto', position: 'relative' }}
+          style={{ height: '52px', width: 'auto', position: 'relative', alignSelf: 'flex-start' }}
           priority
         />
 

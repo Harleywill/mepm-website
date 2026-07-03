@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import type { Role } from '@/lib/roles';
 
 /** Public: list all accreditations. */
@@ -47,6 +48,7 @@ export async function POST(req: Request) {
     data: { label, order },
   });
 
+  revalidatePublicSite();
   await logActivity({
     action: 'create',
     entityType: 'Accreditation',

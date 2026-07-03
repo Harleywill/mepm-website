@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { disciplinesToArray, imageUrl } from '@/lib/projects';
@@ -46,10 +47,11 @@ export default async function LatestProjects() {
                 >
                   <div className="flex h-44 items-center justify-center overflow-hidden bg-slate-50">
                     {cover ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
+                      <Image
                         src={imageUrl(cover.storedPath)}
                         alt={p.title}
+                        width={640}
+                        height={176}
                         className="h-full w-full object-contain"
                       />
                     ) : (

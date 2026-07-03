@@ -4,6 +4,7 @@ import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import type { Role } from '@/lib/roles';
 import { stringifyJsonArray } from '@/lib/services';
+import { revalidatePublicSite } from '@/lib/revalidate';
 
 interface ImportSummary {
   imported: number;
@@ -357,6 +358,8 @@ export async function POST(req: Request) {
     }
     results.siteStats = summary;
   }
+
+  revalidatePublicSite();
 
   return NextResponse.json({ ok: true, results, usersSkipped: 'Admin accounts are never imported — recreate them manually if needed.' });
 }

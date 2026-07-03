@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import AdminGuard from './AdminGuard';
@@ -94,7 +95,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         >
           {/* Logo */}
           <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src="/assets/mepm-logo-white.png" alt="MEPM" style={{ height: '32px', width: 'auto' }} />
+            <Image
+              src="/assets/mepm-logo-white.png"
+              alt="MEPM"
+              width={120}
+              height={32}
+              style={{ height: '32px', width: 'auto' }}
+              priority
+            />
           </div>
 
           {/* Navigation */}

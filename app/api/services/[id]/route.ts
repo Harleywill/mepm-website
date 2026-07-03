@@ -4,6 +4,7 @@ import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { validateService, stringifyJsonArray, isValidServiceCode } from '@/lib/services';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import type { Role } from '@/lib/roles';
 
 async function requireAuth() {
@@ -102,6 +103,7 @@ export async function PATCH(
   }
 
   const service = await prisma.service.update({ where: { id }, data });
+  revalidatePublicSite();
   await logActivity({
     action: 'update',
     entityType: 'Service',
@@ -137,6 +139,7 @@ export async function DELETE(
   }
 
   await prisma.service.delete({ where: { id } });
+  revalidatePublicSite();
   await logActivity({
     action: 'delete',
     entityType: 'Service',

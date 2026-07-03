@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import type { Role } from '@/lib/roles';
 
 /** Admin: persist a new drag-and-drop order for all services. Body: { ids: string[] } in the new order. */
@@ -31,6 +32,7 @@ export async function PATCH(req: Request) {
     )
   );
 
+  revalidatePublicSite();
   await logActivity({
     action: 'update',
     entityType: 'Service',

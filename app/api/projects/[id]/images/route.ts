@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import { saveUpload, validateFiles, IMAGE_DOC_TYPES } from '@/lib/uploads';
 
 /** Admin: upload one or more images to a project. */
@@ -59,6 +60,7 @@ export async function POST(
     include: { images: { orderBy: { order: 'asc' } } },
   });
   if (files.length > 0) {
+    revalidatePublicSite();
     await logActivity({
       action: 'update',
       entityType: 'Project',

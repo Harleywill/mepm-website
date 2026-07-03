@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
+import Image from 'next/image';
 import { ZoomIn } from 'lucide-react';
 import { useToast } from '@/components/admin';
 import { imageUrl } from '@/lib/projects';
@@ -162,9 +163,11 @@ export default function MediaPage() {
                   className="overflow-hidden rounded-md border border-slate-200 bg-black transition-shadow hover:shadow-md"
                 >
                   <div className="relative">
-                    <img
+                    <Image
                       src={item.src}
                       alt={item.label}
+                      width={400}
+                      height={400}
                       className="aspect-square w-full object-cover"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all hover:bg-black/30">
@@ -196,7 +199,13 @@ export default function MediaPage() {
             className="relative max-h-[90vh] max-w-4xl overflow-hidden rounded-lg"
             onClick={(e) => e.stopPropagation()}
           >
-            <img src={zoom.src} alt={zoom.label} className="max-h-[90vh] w-auto" />
+            <Image
+              src={zoom.src}
+              alt={zoom.label}
+              width={1200}
+              height={1200}
+              style={{ width: 'auto', height: '90vh', maxHeight: '90vh' }}
+            />
             <div className="absolute right-4 top-4">
               <button
                 onClick={() => setZoom(null)}

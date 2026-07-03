@@ -9,6 +9,7 @@ interface Project {
   title: string;
   sector: string;
   status: string;
+  published?: boolean;
   featured?: boolean;
   hero?: string;
   updated: string;

@@ -4,6 +4,7 @@ import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { validateFiles, saveUpload, deleteUpload, IMAGE_DOC_TYPES } from '@/lib/uploads';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import type { Role } from '@/lib/roles';
 
 /** Admin: get one testimonial. */
@@ -118,6 +119,7 @@ export async function PATCH(
     data,
   });
 
+  revalidatePublicSite();
   await logActivity({
     action: 'update',
     entityType: 'Testimonial',
@@ -158,6 +160,7 @@ export async function DELETE(
   }
 
   await prisma.testimonial.delete({ where: { id } });
+  revalidatePublicSite();
   await logActivity({
     action: 'delete',
     entityType: 'Testimonial',

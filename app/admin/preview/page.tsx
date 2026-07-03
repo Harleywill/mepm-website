@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { X, ArrowLeft } from 'lucide-react';
 import type { ProjectDTO } from '@/lib/projects';
@@ -271,10 +272,12 @@ export default function PreviewPage() {
                 >
                   <div className="relative h-48 bg-black">
                     {p.images && p.images.length > 0 ? (
-                      <img
+                      <Image
                         src={`/${p.images[0].storedPath.replace(/^public\//, '')}`}
                         alt={p.title}
-                        className="h-full w-full object-cover"
+                        fill
+                        sizes="(max-width: 640px) 100vw, 33vw"
+                        className="object-cover"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center bg-navy-50 text-navy-300">
@@ -401,10 +404,12 @@ function CaseStudyPreview({
       {/* Hero image */}
       {project.images && project.images.length > 0 && (
         <div className="relative h-96 bg-black">
-          <img
+          <Image
             src={`/${project.images[0].storedPath.replace(/^public\//, '')}`}
             alt={project.title}
-            className="h-full w-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
           />
         </div>
       )}
@@ -470,10 +475,13 @@ function CaseStudyPreview({
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {project.images.slice(1).map((img, i) => (
-                <img
+                <Image
                   key={i}
                   src={`/${img.storedPath.replace(/^public\//, '')}`}
                   alt={img.caption || `${project.title} ${i + 1}`}
+                  width={640}
+                  height={480}
+                  style={{ width: '100%', height: 'auto' }}
                   className="rounded-lg"
                 />
               ))}

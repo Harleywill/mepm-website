@@ -1,10 +1,10 @@
 /* ============================================================
    MEPM Building Services Consultants — Foundations
    Color + Type tokens. Import this file in any MEPM design.
-   Fonts load from Google Fonts CDN (see README for substitution notes).
+   Fonts are self-hosted via next/font/google in the root layout
+   (see app/layout.tsx) — reused here via their CSS variables rather
+   than re-fetched from the Google Fonts CDN.
    ============================================================ */
-
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
   /* ---------- BRAND CORE ---------- */
@@ -79,9 +79,9 @@
   --link:      #0A5491;
 
   /* ---------- TYPE FAMILIES ---------- */
-  --font-display: 'Archivo', system-ui, sans-serif;
-  --font-body:    'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono:    'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-body:    var(--font-ibm-plex-sans), system-ui, sans-serif;
+  --font-mono:    var(--font-ibm-plex-mono), ui-monospace, monospace;
 
   /* ---------- TYPE SCALE (1.250 major-third-ish, tuned) ---------- */
   --text-xs:   0.75rem;   /* 12 */

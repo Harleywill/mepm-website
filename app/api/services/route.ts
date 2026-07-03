@@ -4,6 +4,7 @@ import { verifyAuthWithUser } from '@/lib/auth';
 import { can, forbidden } from '@/lib/permissions';
 import { getServices, validateService, stringifyJsonArray, slugify } from '@/lib/services';
 import { logActivity } from '@/lib/activity';
+import { revalidatePublicSite } from '@/lib/revalidate';
 import type { Role } from '@/lib/roles';
 
 /** Public list = published only. Admin (?admin=1) gets everything, including drafts. */
@@ -81,6 +82,7 @@ export async function POST(req: Request) {
     },
   });
 
+  revalidatePublicSite();
   await logActivity({
     action: 'create',
     entityType: 'Service',
