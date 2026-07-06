@@ -14,6 +14,7 @@ const NAV_GROUPS = [
     items: [
       { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', href: '/admin/dashboard' },
       { id: 'activity', label: 'History', icon: 'History', href: '/admin/activity' },
+      { id: 'security', label: 'Security', icon: 'ShieldAlert', href: '/admin/security' },
     ],
   },
   {

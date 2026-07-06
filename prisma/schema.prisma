@@ -184,3 +184,16 @@ model ActivityLog {
 
   @@index([createdAt])
 }
+
+/** Security audit trail for /api/auth/login — kept separate from
+ *  ActivityLog, which is scoped to content changes shown in the CMS
+ *  history feed. */
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  username  String // as submitted; may not correspond to a real account
+  success   Boolean
+  ipAddress String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
