@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
+import { can, forbidden } from '@/lib/permissions';
+import type { Role } from '@/lib/roles';
 import { logActivity } from '@/lib/activity';
 import { revalidatePublicSite } from '@/lib/revalidate';
 import { deleteUpload } from '@/lib/uploads';
@@ -11,10 +13,15 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string; imgId: string }> }
 ) {
+  let user;
   try {
-    await verifyAuth();
+    user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  if (!can(user.role as Role, 'edit')) {
+    const forbid = forbidden();
+    return NextResponse.json({ error: forbid.error }, { status: forbid.status });
   }
   const { id, imgId } = await params;
   const body = await req.json().catch(() => ({}));
@@ -54,6 +61,10 @@ export async function DELETE(
     user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  if (!can(user.role as Role, 'delete')) {
+    const forbid = forbidden();
+    return NextResponse.json({ error: forbid.error }, { status: forbid.status });
   }
   const { id, imgId } = await params;
   const image = await prisma.projectImage.findFirst({

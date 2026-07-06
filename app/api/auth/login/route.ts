@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyPassword, signToken, setAuthCookie } from '@/lib/auth';
+import { rateLimit, clientKey } from '@/lib/rate-limit';
+
+const LOGIN_LIMIT = 10;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
 export async function POST(req: Request) {
+  if (!rateLimit(`login:${clientKey(req)}`, LOGIN_LIMIT, LOGIN_WINDOW_MS)) {
+    return NextResponse.json(
+      { error: 'Too many login attempts. Please try again later.' },
+      { status: 429 }
+    );
+  }
+
   let body: { username?: string; password?: string };
   try {
     body = await req.json();

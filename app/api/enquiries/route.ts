@@ -9,11 +9,21 @@ import {
 } from '@/lib/uploads';
 import { sendEnquiryAlert } from '@/lib/email';
 import { isEnquiryStatus } from '@/lib/enquiries';
+import { rateLimit, clientKey } from '@/lib/rate-limit';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ENQUIRY_LIMIT = 5;
+const ENQUIRY_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
 /** Public: create an enquiry from the contact form (multipart). */
 export async function POST(req: Request) {
+  if (!rateLimit(`enquiry:${clientKey(req)}`, ENQUIRY_LIMIT, ENQUIRY_WINDOW_MS)) {
+    return NextResponse.json(
+      { error: 'Too many submissions. Please try again later.' },
+      { status: 429 }
+    );
+  }
+
   const form = await req.formData();
   const name = String(form.get('name') || '').trim();
   const email = String(form.get('email') || '').trim();

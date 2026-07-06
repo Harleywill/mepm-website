@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   const username = process.env.ADMIN_USERNAME || 'admin';
-  const password = process.env.ADMIN_PASSWORD || 'change-me';
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) {
+    throw new Error('ADMIN_PASSWORD environment variable is not set');
+  }
   const passwordHash = await bcrypt.hash(password, 10);
 
   // Idempotent: create the admin on first run, re-hash the password on
@@ -17,20 +20,22 @@ async function main() {
   });
   console.log(`Seeded admin user: ${username} (role: administrator)`);
 
-  // Create two additional demo users for testing roles
-  const demoUsers = [
-    { username: 'alice', password: 'alice123', role: 'editor' },
-    { username: 'bob', password: 'bob123', role: 'viewer' },
-  ];
+  // Demo users for testing roles — local/dev only, never seeded in production.
+  if (process.env.NODE_ENV !== 'production') {
+    const demoUsers = [
+      { username: 'alice', password: 'alice123', role: 'editor' },
+      { username: 'bob', password: 'bob123', role: 'viewer' },
+    ];
 
-  for (const { username: u, password: p, role: r } of demoUsers) {
-    const hash = await bcrypt.hash(p, 10);
-    await prisma.adminUser.upsert({
-      where: { username: u },
-      update: { passwordHash: hash, role: r },
-      create: { username: u, passwordHash: hash, role: r },
-    });
-    console.log(`Seeded user: ${u} (role: ${r})`);
+    for (const { username: u, password: p, role: r } of demoUsers) {
+      const hash = await bcrypt.hash(p, 10);
+      await prisma.adminUser.upsert({
+        where: { username: u },
+        update: { passwordHash: hash, role: r },
+        create: { username: u, passwordHash: hash, role: r },
+      });
+      console.log(`Seeded user: ${u} (role: ${r})`);
+    }
   }
 
   // Site settings singleton — create defaults once, never overwrite admin edits.

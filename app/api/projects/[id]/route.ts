@@ -3,6 +3,8 @@ import { rm } from 'node:fs/promises';
 import path from 'node:path';
 import { prisma } from '@/lib/db';
 import { verifyAuth, verifyAuthWithUser } from '@/lib/auth';
+import { can, forbidden } from '@/lib/permissions';
+import type { Role } from '@/lib/roles';
 import { logActivity } from '@/lib/activity';
 import { revalidatePublicSite } from '@/lib/revalidate';
 import { disciplinesFromArray, isProjectStatus } from '@/lib/projects';
@@ -40,6 +42,10 @@ export async function PATCH(
     user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  if (!can(user.role as Role, 'edit')) {
+    const forbid = forbidden();
+    return NextResponse.json({ error: forbid.error }, { status: forbid.status });
   }
   const { id } = await params;
   const body = await req.json().catch(() => ({}));
@@ -86,6 +92,10 @@ export async function DELETE(
     user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  if (!can(user.role as Role, 'delete')) {
+    const forbid = forbidden();
+    return NextResponse.json({ error: forbid.error }, { status: forbid.status });
   }
   const { id } = await params;
   const project = await prisma.project.findUnique({ where: { id } });

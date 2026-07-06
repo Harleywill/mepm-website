@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyAuthWithUser } from '@/lib/auth';
+import { can, forbidden } from '@/lib/permissions';
+import type { Role } from '@/lib/roles';
 import { logActivity } from '@/lib/activity';
 import { revalidatePublicSite } from '@/lib/revalidate';
 
@@ -22,6 +24,10 @@ export async function POST(req: Request) {
     user = await verifyAuthWithUser();
   } catch {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  if (!can(user.role as Role, 'edit')) {
+    const forbid = forbidden();
+    return NextResponse.json({ error: forbid.error }, { status: forbid.status });
   }
 
   try {

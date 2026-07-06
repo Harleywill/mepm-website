@@ -2,8 +2,11 @@ import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 import { cookies } from 'next/headers';
 
-const secret = () =>
-  new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secret');
+const secret = () => {
+  const value = process.env.JWT_SECRET;
+  if (!value) throw new Error('JWT_SECRET environment variable is not set');
+  return new TextEncoder().encode(value);
+};
 
 export const COOKIE = 'auth-token';
 const MAX_AGE = 60 * 60 * 24 * 7; // 7 days
