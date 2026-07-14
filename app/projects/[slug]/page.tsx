@@ -10,6 +10,7 @@ import {
   imageUrl,
   PROJECT_STATUS_LABELS,
 } from '@/lib/projects';
+import { LightboxProvider, LightboxTrigger, type LightboxImage } from '../../components/ui';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -52,6 +53,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const gallery = project.images.filter((i) => i.id !== cover?.id);
   const disciplines = disciplinesToArray(project.disciplines);
 
+  // Cover + gallery share one navigable lightbox sequence, cover first.
+  const allImages: LightboxImage[] = [
+    ...(cover ? [{ id: cover.id, src: imageUrl(cover.storedPath), caption: cover.caption }] : []),
+    ...gallery.map((img) => ({ id: img.id, src: imageUrl(img.storedPath), caption: img.caption })),
+  ];
+
   const titleBlock: [string, string][] = [
     ['Client', project.client || '—'],
     ['Location', project.location || '—'],
@@ -70,7 +77,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   ];
 
   return (
-    <>
+    <LightboxProvider images={allImages}>
       <section className="bp-grid-light border-b border-slate-200">
         <div className="mx-auto max-w-7xl px-6 pt-12 pb-16">
           <Link
@@ -87,7 +94,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <p className="mepm-lead mt-5 max-w-xl">{project.summary}</p>
               )}
               {cover && (
-                <div className="mt-8 flex max-h-[480px] items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                <LightboxTrigger
+                  index={0}
+                  className="mt-8 flex max-h-[480px] w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
+                >
                   {/* Drawings vary in aspect; contain so the full sheet shows. */}
                   <Image
                     src={imageUrl(cover.storedPath)}
@@ -96,7 +106,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                     height={480}
                     className="max-h-[480px] w-full object-contain"
                   />
-                </div>
+                </LightboxTrigger>
               )}
             </div>
 
@@ -140,18 +150,23 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
           {gallery.length > 0 && (
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {gallery.map((img) => (
+              {gallery.map((img, i) => (
                 <figure
                   key={img.id}
                   className="overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
                 >
-                  <Image
-                    src={imageUrl(img.storedPath)}
-                    alt={img.caption ?? project.title}
-                    width={800}
-                    height={224}
-                    className="h-56 w-full object-contain"
-                  />
+                  <LightboxTrigger
+                    index={(cover ? 1 : 0) + i}
+                    className="block w-full cursor-zoom-in"
+                  >
+                    <Image
+                      src={imageUrl(img.storedPath)}
+                      alt={img.caption ?? project.title}
+                      width={800}
+                      height={224}
+                      className="h-56 w-full object-contain"
+                    />
+                  </LightboxTrigger>
                   {img.caption && (
                     <figcaption className="px-4 py-2.5 text-sm text-slate-500">
                       {img.caption}
@@ -163,6 +178,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           )}
         </section>
       )}
-    </>
+    </LightboxProvider>
   );
 }
