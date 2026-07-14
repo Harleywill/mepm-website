@@ -91,64 +91,69 @@ export default function FocalPointPicker({ imageUrl, cropX, cropY, onChange, onC
         </button>
       </div>
 
-      <div
-        ref={containerRef}
-        className="relative select-none overflow-hidden rounded-lg border border-slate-200"
-        style={{ cursor: 'crosshair' }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleMouseUp}
-      >
-        <img
-          src={imageUrl}
-          alt="Set focal point"
-          className="block w-full pointer-events-none"
-          draggable={false}
-        />
-        <div
-          className="pointer-events-none absolute"
-          style={{ left: `${cropX * 100}%`, top: `${cropY * 100}%`, transform: 'translate(-50%, -50%)' }}
-        >
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <p className="mepm-spec mb-1.5 text-slate-400">Drag to reposition</p>
           <div
-            style={{
-              position: 'absolute',
-              width: 28,
-              height: 28,
-              marginLeft: -14,
-              marginTop: -14,
-              borderRadius: '50%',
-              border: '2.5px solid #fff',
-              boxShadow: '0 0 0 1.5px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.25)',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              width: 8,
-              height: 8,
-              marginLeft: -4,
-              marginTop: -4,
-              borderRadius: '50%',
-              background: '#68B830',
-            }}
-          />
+            ref={containerRef}
+            className="relative select-none overflow-hidden rounded-lg border border-slate-200"
+            style={{ cursor: 'crosshair' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleMouseUp}
+          >
+            <img
+              src={imageUrl}
+              alt="Set focal point"
+              className="block w-full pointer-events-none"
+              draggable={false}
+            />
+            <div
+              className="pointer-events-none absolute"
+              style={{ left: `${cropX * 100}%`, top: `${cropY * 100}%`, transform: 'translate(-50%, -50%)' }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  width: 28,
+                  height: 28,
+                  marginLeft: -14,
+                  marginTop: -14,
+                  borderRadius: '50%',
+                  border: '2.5px solid #fff',
+                  boxShadow: '0 0 0 1.5px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.25)',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  width: 8,
+                  height: 8,
+                  marginLeft: -4,
+                  marginTop: -4,
+                  borderRadius: '50%',
+                  background: '#68B830',
+                }}
+              />
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div>
-        <p className="mepm-spec mb-1.5 text-slate-400">Homepage card preview</p>
-        <div className="overflow-hidden rounded-lg border border-slate-200" style={{ aspectRatio: '16/9' }}>
-          <img
-            src={imageUrl}
-            alt="Preview"
-            className="pointer-events-none h-full w-full object-cover"
-            style={{ objectPosition: `${cropX * 100}% ${cropY * 100}%` }}
-            draggable={false}
-          />
+        <div>
+          <p className="mepm-spec mb-1.5 text-slate-400">Homepage card preview</p>
+          <div className="overflow-hidden rounded-lg border border-slate-200" style={{ aspectRatio: '16/9' }}>
+            <img
+              src={imageUrl}
+              alt="Preview"
+              className="pointer-events-none h-full w-full object-cover"
+              style={{ objectPosition: `${cropX * 100}% ${cropY * 100}%` }}
+              draggable={false}
+            />
+          </div>
         </div>
       </div>
     </div>

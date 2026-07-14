@@ -31,6 +31,8 @@ const SECTOR_OPTIONS = [
   'Retail',
 ];
 
+const CUSTOM_SECTOR = '__custom__';
+
 export default function ProjectForm({ project }: { project?: ProjectDTO }) {
   const router = useRouter();
   const editing = Boolean(project);
@@ -54,6 +56,7 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
   const [error, setError] = useState('');
 
   const cover = images.find((img) => img.isCover) ?? null;
+  const isCustomSector = !SECTOR_OPTIONS.includes(sector);
 
   const toggleDiscipline = (d: Discipline) =>
     setDisciplines((prev) =>
@@ -379,8 +382,8 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
           <Panel>
             <FieldGroup label="Sector">
               <select
-                value={sector}
-                onChange={(e) => setSector(e.target.value)}
+                value={isCustomSector ? CUSTOM_SECTOR : sector}
+                onChange={(e) => setSector(e.target.value === CUSTOM_SECTOR ? '' : e.target.value)}
                 className="w-full rounded-md border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:border-navy-300 focus:outline-none focus:ring-2 focus:ring-navy-300/60"
               >
                 {SECTOR_OPTIONS.map((s) => (
@@ -388,7 +391,17 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
                     {s}
                   </option>
                 ))}
+                <option value={CUSTOM_SECTOR}>Other…</option>
               </select>
+              {isCustomSector && (
+                <input
+                  value={sector}
+                  onChange={(e) => setSector(e.target.value)}
+                  placeholder="e.g. Leisure & Hospitality"
+                  autoFocus
+                  className="mt-2 w-full rounded-md border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-navy-300 focus:outline-none focus:ring-2 focus:ring-navy-300/60"
+                />
+              )}
             </FieldGroup>
 
             <div className="mt-4">
