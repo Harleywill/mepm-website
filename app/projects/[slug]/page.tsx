@@ -8,6 +8,7 @@ import {
   DISCIPLINE_LABELS,
   isProjectStatus,
   imageUrl,
+  cropPosition,
   PROJECT_STATUS_LABELS,
 } from '@/lib/projects';
 import { LightboxProvider, LightboxTrigger, type LightboxImage } from '../../components/ui';
@@ -96,15 +97,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               {cover && (
                 <LightboxTrigger
                   index={0}
-                  className="mt-8 flex max-h-[480px] w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
+                  className="mt-8 block h-[420px] w-full cursor-zoom-in overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
                 >
-                  {/* Drawings vary in aspect; contain so the full sheet shows. */}
+                  {/* Cropped to the chosen focal point here; the lightbox
+                      still shows the full, uncropped image on click. */}
                   <Image
                     src={imageUrl(cover.storedPath)}
                     alt={cover.caption ?? project.title}
                     width={1600}
-                    height={480}
-                    className="max-h-[480px] w-full object-contain"
+                    height={420}
+                    className="h-full w-full object-cover"
+                    style={{ objectPosition: cropPosition(cover.cropX, cover.cropY) }}
                   />
                 </LightboxTrigger>
               )}
