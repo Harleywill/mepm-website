@@ -91,6 +91,8 @@ export async function POST(req: Request) {
         ];
         for (const img of images) {
           if (!img?.id || !img?.filename || !img?.storedPath) continue;
+          const cropX = Number.isFinite(img.cropX) ? Math.max(0, Math.min(1, img.cropX)) : 0.5;
+          const cropY = Number.isFinite(img.cropY) ? Math.max(0, Math.min(1, img.cropY)) : 0.5;
           await prisma.projectImage.upsert({
             where: { id: img.id },
             update: {
@@ -102,6 +104,8 @@ export async function POST(req: Request) {
               caption: img.caption ?? null,
               isCover: Boolean(img.isCover),
               order: Number(img.order) || 0,
+              cropX,
+              cropY,
             },
             create: {
               id: img.id,
@@ -113,6 +117,8 @@ export async function POST(req: Request) {
               caption: img.caption ?? null,
               isCover: Boolean(img.isCover),
               order: Number(img.order) || 0,
+              cropX,
+              cropY,
             },
           });
         }

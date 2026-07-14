@@ -42,11 +42,21 @@ export async function PATCH(
       data: { caption: body.caption },
     });
   }
+  if (typeof body.cropX === 'number' && typeof body.cropY === 'number') {
+    await prisma.projectImage.update({
+      where: { id: imgId },
+      data: {
+        cropX: Math.max(0, Math.min(1, body.cropX)),
+        cropY: Math.max(0, Math.min(1, body.cropY)),
+      },
+    });
+  }
 
   const project = await prisma.project.findUnique({
     where: { id },
     include: { images: { orderBy: { order: 'asc' } } },
   });
+  revalidatePublicSite();
   return NextResponse.json({ project });
 }
 

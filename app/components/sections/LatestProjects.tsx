@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
-import { disciplinesToArray, imageUrl } from '@/lib/projects';
+import { disciplinesToArray, imageUrl, cropPosition } from '@/lib/projects';
 import { Reveal } from '../ui';
 
 export default async function LatestProjects() {
@@ -52,7 +52,8 @@ export default async function LatestProjects() {
                         alt={p.title}
                         width={640}
                         height={176}
-                        className="h-full w-full object-contain"
+                        className="h-full w-full object-cover"
+                        style={{ objectPosition: cropPosition(cover.cropX, cover.cropY) }}
                       />
                     ) : (
                       <span className="mepm-spec text-slate-300">MEPM</span>

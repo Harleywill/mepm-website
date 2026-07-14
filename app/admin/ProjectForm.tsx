@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Trash2, UploadCloud, Image as ImageIcon, Star, X, Check } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Image as ImageIcon, Star, X, Check } from 'lucide-react';
 import {
   DISCIPLINES,
   DISCIPLINE_LABELS,
@@ -14,6 +14,7 @@ import {
   type Discipline,
   type ProjectDTO,
 } from '@/lib/projects';
+import FocalPointPicker from './FocalPointPicker';
 
 const DISCIPLINE_COLORS: Record<Discipline, string> = {
   ELE: '#0066cc', // blue
@@ -33,7 +34,6 @@ const SECTOR_OPTIONS = [
 export default function ProjectForm({ project }: { project?: ProjectDTO }) {
   const router = useRouter();
   const editing = Boolean(project);
-  const fileInputHero = useRef<HTMLInputElement>(null);
   const fileInputGallery = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState(project?.title ?? '');
@@ -52,9 +52,8 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
   const [images, setImages] = useState(project?.images ?? []);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [heroImage, setHeroImage] = useState<string | null>(
-    images.find((img) => img.isCover)?.storedPath ? imageUrl(images.find((img) => img.isCover)!.storedPath) : null
-  );
+
+  const cover = images.find((img) => img.isCover) ?? null;
 
   const toggleDiscipline = (d: Discipline) =>
     setDisciplines((prev) =>
@@ -127,12 +126,7 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isCover: true }),
     });
-    if (res.ok) {
-      const updated = (await res.json()).project.images;
-      setImages(updated);
-      const cover = updated.find((img: any) => img.isCover);
-      setHeroImage(cover ? imageUrl(cover.storedPath) : null);
-    }
+    if (res.ok) setImages((await res.json()).project.images);
   };
 
   const removeImage = async (imgId: string) => {
@@ -140,12 +134,22 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
     const res = await fetch(`/api/projects/${project.id}/images/${imgId}`, {
       method: 'DELETE',
     });
-    if (res.ok) {
-      const updated = (await res.json()).project.images;
-      setImages(updated);
-      const cover = updated.find((img: any) => img.isCover);
-      setHeroImage(cover ? imageUrl(cover.storedPath) : null);
-    }
+    if (res.ok) setImages((await res.json()).project.images);
+  };
+
+  // Live drag feedback (no network) vs. persisting once the drag ends —
+  // keeps the picker responsive without a fetch on every mouse-move.
+  const setCropLocal = (imgId: string, cropX: number, cropY: number) => {
+    setImages((prev) => prev.map((img) => (img.id === imgId ? { ...img, cropX, cropY } : img)));
+  };
+
+  const saveCrop = async (imgId: string, cropX: number, cropY: number) => {
+    if (!project) return;
+    await fetch(`/api/projects/${project.id}/images/${imgId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cropX, cropY }),
+    });
   };
 
   return (
@@ -213,67 +217,27 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
             </FieldGroup>
           </Panel>
 
-          {/* Hero Image */}
+          {/* Cover Image & Focal Point */}
           <Panel>
-            <FieldGroup label="Hero image" hint="Shown on the card & case-study header">
-              <div
-                className="relative overflow-hidden rounded-lg border-2 border-dashed border-slate-300 bg-slate-50"
-                style={{ height: 220 }}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.style.borderColor = '#004078';
-                  e.currentTarget.style.backgroundColor = '#eef4fa';
-                }}
-                onDragLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#cbd5e1';
-                  e.currentTarget.style.backgroundColor = '#f9fafb';
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.style.borderColor = '#cbd5e1';
-                  e.currentTarget.style.backgroundColor = '#f9fafb';
-                }}
-              >
-                {heroImage ? (
-                  <>
-                    <img src={heroImage} alt="Hero" className="h-full w-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => fileInputHero.current?.click()}
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100"
-                    >
-                      <div className="text-center text-white">
-                        <UploadCloud size={24} className="mx-auto mb-2" />
-                        <div className="text-sm font-medium">Change image</div>
-                      </div>
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => fileInputHero.current?.click()}
-                    className="flex h-full w-full flex-col items-center justify-center gap-2 text-slate-400 hover:text-slate-500"
-                  >
-                    <ImageIcon size={32} strokeWidth={1.5} />
-                    <div className="mepm-spec">Drop the main building / plant-room photo</div>
-                  </button>
-                )}
-              </div>
-              <input
-                ref={fileInputHero}
-                type="file"
-                accept="image/*"
-                className="sr-only"
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                      setHeroImage(event.target?.result as string);
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
-                  }
-                }}
-              />
+            <FieldGroup label="Cover image" hint="Shown on the homepage card & case-study header">
+              {cover ? (
+                <FocalPointPicker
+                  imageUrl={imageUrl(cover.storedPath)}
+                  cropX={cover.cropX}
+                  cropY={cover.cropY}
+                  onChange={(x, y) => setCropLocal(cover.id, x, y)}
+                  onChangeEnd={(x, y) => saveCrop(cover.id, x, y)}
+                />
+              ) : (
+                <div className="flex h-40 flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 text-center text-slate-400">
+                  <ImageIcon size={28} strokeWidth={1.5} />
+                  <div className="mepm-spec max-w-[220px]">
+                    {editing
+                      ? 'Upload an image below, then set it as cover to control the crop here.'
+                      : 'Create the project first, then upload images below.'}
+                  </div>
+                </div>
+              )}
             </FieldGroup>
           </Panel>
 

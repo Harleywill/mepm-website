@@ -47,6 +47,13 @@ export interface ProjectImageDTO {
   caption: string | null;
   isCover: boolean;
   order: number;
+  cropX: number;
+  cropY: number;
+}
+
+/** object-position for an image cropped (object-cover) to fill a fixed box. */
+export function cropPosition(cropX: number, cropY: number): string {
+  return `${cropX * 100}% ${cropY * 100}%`;
 }
 
 export interface ProjectDTO {

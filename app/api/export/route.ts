@@ -85,6 +85,8 @@ export async function GET(_req: Request) {
           size: img.size,
           caption: img.caption,
           order: img.order,
+          cropX: img.cropX,
+          cropY: img.cropY,
         }));
 
       return {
@@ -109,6 +111,8 @@ export async function GET(_req: Request) {
               storedPath: coverImage.storedPath,
               mimeType: coverImage.mimeType,
               size: coverImage.size,
+              cropX: coverImage.cropX,
+              cropY: coverImage.cropY,
             }
           : null,
         gallery,

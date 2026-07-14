@@ -65,6 +65,10 @@ model ProjectImage {
   caption    String?
   isCover    Boolean @default(false)
   order      Int     @default(0)
+  // Focal point (0-1, normalised) — controls object-position when this
+  // image is cropped to fill a fixed box, e.g. the homepage project card.
+  cropX      Float   @default(0.5)
+  cropY      Float   @default(0.5)
 }
 
 model AdminUser {
