@@ -52,7 +52,7 @@ export default async function ServicePage({ params }: PageProps) {
             <h1 className="mepm-display text-navy-700 mt-5 mb-6">
               {service.name.split(' ')[0]}
               <br />
-              <span className="text-slate-400">
+              <span className="text-slate-500">
                 {service.name.split(' ').slice(1).join(' ')}
               </span>
             </h1>

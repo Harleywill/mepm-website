@@ -110,7 +110,7 @@ export default function ContactForm() {
     return (
       <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-3">
-          <span className="mepm-spec">MEPM · Enquiry received`</span>
+          <span className="mepm-spec">MEPM · Enquiry received</span>
           <span className="font-mono text-xs font-semibold text-green-700">
             REF-{new Date().getFullYear()}
           </span>

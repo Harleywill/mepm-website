@@ -65,7 +65,7 @@ export default async function ContactPage() {
           <span className="mepm-spec text-green-700">MEPM · Enquiry</span>
           <h1 className="mepm-display mt-4 text-navy-700">
             Start your{' '}
-            <span className="text-slate-400">project</span>
+            <span className="text-slate-500">project</span>
           </h1>
           <p className="mepm-lead mt-5 max-w-xl">
             Tell us about the building and what you need. We will come back with

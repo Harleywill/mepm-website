@@ -194,7 +194,7 @@ export default function Hero3D() {
           <div className="mepm-eyebrow mb-6">BUILDING SERVICES CONSULTANTS</div>
           <h1 className="mepm-display text-navy-700 mb-6">
             Engineering buildings that{' '}
-            <span className="text-mepm-green">perform</span>.
+            <span className="text-green-700">perform</span>.
           </h1>
           <p className="mepm-lead text-slate-600 mb-10 max-w-xl">
             Multi-disciplinary electrical, mechanical and environmental
