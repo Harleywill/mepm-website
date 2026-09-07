@@ -194,7 +194,7 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
       </div>
 
       {/* Two-Column Layout */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
         {/* MAIN COLUMN */}
         <div className="flex flex-col gap-5">
           {/* Title & Summary */}
@@ -434,7 +434,7 @@ export default function ProjectForm({ project }: { project?: ProjectDTO }) {
 
           {/* Client, Year, Location */}
           <Panel>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FieldGroup label="Client">
                 <input
                   value={client}

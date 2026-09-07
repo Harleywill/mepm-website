@@ -53,7 +53,11 @@ export default function AdminEnquiriesPage() {
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         setEnquiries(list);
-        if (list.length > 0 && !selected) setSelected(list[0].id);
+        // Auto-open the first enquiry for the desktop two-pane view only —
+        // on mobile the list/detail toggle should land on the list first.
+        if (list.length > 0 && !selected && window.innerWidth >= 768) {
+          setSelected(list[0].id);
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -142,11 +146,11 @@ export default function AdminEnquiriesPage() {
         </div>
       </div>
 
-      {/* Two-column layout */}
+      {/* Two-column layout — single column + selection toggle below 768px */}
       <div
+        className="mepm-enq-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: '360px 1fr',
           gap: 0,
           border: '1px solid var(--border)',
           borderRadius: 'var(--radius-lg)',
@@ -158,11 +162,11 @@ export default function AdminEnquiriesPage() {
       >
         {/* List column */}
         <div
+          className={`mepm-enq-list${active ? ' mepm-enq-hide-mobile' : ''}`}
           style={{
             borderRight: '1px solid var(--border)',
             background: 'var(--slate-50)',
             overflowY: 'auto',
-            maxHeight: 620,
           }}
         >
           {loading ? (
@@ -266,9 +270,29 @@ export default function AdminEnquiriesPage() {
         </div>
 
         {/* Detail column */}
-        <div style={{ padding: active ? 32 : 0 }}>
+        <div className={`mepm-enq-detail${!active ? ' mepm-enq-hide-mobile' : ''}`} style={{ padding: active ? 32 : 0 }}>
           {active ? (
             <div>
+              <button
+                className="mepm-enq-back"
+                onClick={() => setSelected(null)}
+                style={{
+                  alignItems: 'center',
+                  gap: 6,
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 600,
+                  fontSize: 13.5,
+                  color: 'var(--navy-700)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  marginBottom: 18,
+                }}
+              >
+                <Icon name="ChevronLeft" size={16} />
+                Back to list
+              </button>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
                 <div>
                   <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: 'var(--navy-800)', margin: 0 }}>

@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Plus, Trash2, Check, Download, Upload } from 'lucide-react';
+import { Plus, Trash2, Check, Download, Upload, AlertTriangle } from 'lucide-react';
+import { Modal } from '@/components/admin';
 import type {
   SiteSettingsDTO,
   StatDTO,
   QualificationDTO,
 } from '@/lib/settings';
+
+const RESET_PHRASE = 'delete all demo data';
 
 const input =
   'w-full px-4 py-2.5 rounded-md border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-navy-300/60 focus:border-navy-300 transition-colors';
@@ -46,6 +49,10 @@ export default function AdminSettingsPage() {
   } | null>(null);
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [resetConfirmText, setResetConfirmText] = useState('');
+  const [resetting, setResetting] = useState(false);
+  const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<Record<
     string,
     { imported: number; skipped: number; errors: string[] }
@@ -53,6 +60,11 @@ export default function AdminSettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    fetch('/api/auth/me')
+      .then((r) => r.json())
+      .then((d) => setCurrentUserRole(d.ok ? d.role : null))
+      .catch(() => setCurrentUserRole(null));
+
     fetch('/api/settings')
       .then((r) => r.json())
       .then((d) => {
@@ -158,11 +170,19 @@ export default function AdminSettingsPage() {
     }
   };
 
-  const handleResetData = () => {
-    if (window.confirm('Reset all demo data? This will clear all content and restore defaults.')) {
-      fetch('/api/reset', { method: 'POST' }).then(() => {
-        window.location.reload();
-      });
+  const openResetModal = () => {
+    setResetConfirmText('');
+    setResetModalOpen(true);
+  };
+
+  const handleResetData = async () => {
+    if (resetConfirmText.trim().toLowerCase() !== RESET_PHRASE) return;
+    setResetting(true);
+    try {
+      await fetch('/api/reset', { method: 'POST' });
+      window.location.reload();
+    } catch {
+      setResetting(false);
     }
   };
 
@@ -286,30 +306,81 @@ export default function AdminSettingsPage() {
         )}
       </Section>
 
-      {/* Reset data section */}
-      <Section title="Reset demo data" hint="Warning: this action clears all content and restores sample data. Use with caution.">
-        <button
-          onClick={handleResetData}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 16px',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid rgba(209, 67, 67, 0.3)',
-            background: 'transparent',
-            color: '#D14343',
-            fontWeight: 600,
-            fontSize: 14,
-            cursor: 'pointer',
-          }}
-        >
-          Reset to sample data
-        </button>
-      </Section>
+      {/* Reset data section — administrators only */}
+      {currentUserRole === 'administrator' && (
+        <Section title="Reset demo data" hint="Warning: this action clears all content and restores sample data. Use with caution.">
+          <button
+            onClick={openResetModal}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 16px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(209, 67, 67, 0.3)',
+              background: 'transparent',
+              color: '#D14343',
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: 'pointer',
+            }}
+          >
+            Reset to sample data
+          </button>
+        </Section>
+      )}
+
+      <Modal
+        open={resetModalOpen}
+        onClose={() => !resetting && setResetModalOpen(false)}
+        eyebrow="Destructive action"
+        title="Reset all demo data?"
+        width={440}
+      >
+        <div className="flex gap-3 rounded-md border border-red-200 bg-red-50 p-4">
+          <AlertTriangle size={18} className="mt-0.5 flex-none text-red-600" />
+          <p className="text-sm leading-relaxed text-red-800">
+            This permanently deletes{' '}
+            {content
+              ? `${content.projects} project${content.projects === 1 ? '' : 's'}, ${content.enquiries} enquir${content.enquiries === 1 ? 'y' : 'ies'}, ${content.testimonials} testimonial${content.testimonials === 1 ? '' : 's'}, and ${content.team} team member${content.team === 1 ? '' : 's'}`
+              : 'all current content'}
+            , then restores sample data in their place. There is no undo.
+          </p>
+        </div>
+
+        <p className="mt-4 text-sm text-slate-600">
+          Type <strong className="font-mono text-navy-800">{RESET_PHRASE}</strong> below to confirm.
+        </p>
+        <input
+          autoFocus
+          value={resetConfirmText}
+          onChange={(e) => setResetConfirmText(e.target.value)}
+          placeholder={RESET_PHRASE}
+          className={`${input} mt-2`}
+        />
+
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => setResetModalOpen(false)}
+            disabled={resetting}
+            className="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleResetData}
+            disabled={resetting || resetConfirmText.trim().toLowerCase() !== RESET_PHRASE}
+            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {resetting ? 'Resetting…' : 'Reset everything'}
+          </button>
+        </div>
+      </Modal>
 
       <Section title="Contact details">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Phone">
             <input value={settings.phone} onChange={set('phone')} className={input} />
           </Field>
@@ -329,7 +400,7 @@ export default function AdminSettingsPage() {
       </Section>
 
       <Section title="Social links">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Facebook URL">
             <input value={settings.facebook} onChange={set('facebook')} className={input} placeholder="https://facebook.com/…" />
           </Field>
@@ -346,7 +417,7 @@ export default function AdminSettingsPage() {
       </Section>
 
 
-      <div className="sticky bottom-0 -mx-6 flex items-center gap-3 border-t border-slate-200 bg-slate-50/90 px-6 py-4 backdrop-blur">
+      <div className="sticky bottom-0 flex items-center gap-3 border-t border-slate-200 bg-slate-50/90 px-6 py-4 backdrop-blur">
         <button
           onClick={save}
           disabled={saving}

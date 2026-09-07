@@ -135,11 +135,11 @@ export default function ServiceForm({ service }: { service?: ServiceDTO }) {
     <form onSubmit={save}>
       {/* Sticky Editor Bar */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-start gap-3">
           <button
             type="button"
             onClick={() => router.push('/admin/services')}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+            className="inline-flex h-9 w-9 flex-none items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
             title="Back"
           >
             <ArrowLeft size={18} />
@@ -170,7 +170,7 @@ export default function ServiceForm({ service }: { service?: ServiceDTO }) {
       </div>
 
       {/* Two-Column Layout */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
         {/* MAIN COLUMN */}
         <div className="flex flex-col gap-5">
           <Panel>
@@ -320,7 +320,7 @@ export default function ServiceForm({ service }: { service?: ServiceDTO }) {
           </Panel>
 
           <Panel>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <FieldGroup label="Stat value">
                 <input
                   value={statValue}

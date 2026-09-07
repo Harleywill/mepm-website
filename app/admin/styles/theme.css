@@ -241,3 +241,140 @@ p, .mepm-body {
   text-transform: uppercase;
   color: var(--slate-500);
 }
+
+/* ============================================================
+   Admin shell — mobile
+   Sidebar is a fixed 252px column with no collapse on desktop;
+   below 900px it becomes an off-canvas drawer toggled by a
+   hamburger button, with an overlay to close it.
+   ============================================================ */
+.mepm-admin-sidebar {
+  width: 252px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.mepm-admin-hamburger {
+  display: none;
+}
+
+.mepm-admin-header {
+  padding: 0 36px;
+}
+
+.mepm-admin-header-extra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mepm-admin-main {
+  padding: 36px 36px 64px;
+}
+
+.mepm-admin-overlay {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .mepm-admin-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100dvh;
+    width: 84vw;
+    max-width: 300px;
+    transform: translateX(-100%);
+    transition: transform 220ms ease;
+    z-index: 60;
+    box-shadow: 24px 0 48px rgba(0, 0, 0, 0.28);
+  }
+  .mepm-admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .mepm-admin-hamburger {
+    display: inline-flex;
+  }
+
+  .mepm-admin-header {
+    padding: 0 14px;
+  }
+  .mepm-admin-header-extra {
+    display: none;
+  }
+
+  .mepm-admin-main {
+    padding: 20px 14px 48px;
+  }
+
+  .mepm-admin-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 12, 24, 0.5);
+    z-index: 55;
+  }
+}
+
+/* Enquiries inbox — desktop is a fixed two-pane layout; below 768px it
+   becomes single-column, toggling between the list and the open enquiry
+   based on selection instead of showing both at once. */
+.mepm-enq-grid {
+  grid-template-columns: 360px 1fr;
+}
+.mepm-enq-list {
+  max-height: 620px;
+}
+.mepm-enq-back {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mepm-enq-grid {
+    grid-template-columns: 1fr;
+  }
+  .mepm-enq-list {
+    max-height: none;
+  }
+  .mepm-enq-hide-mobile {
+    display: none;
+  }
+  .mepm-enq-back {
+    display: inline-flex;
+  }
+}
+
+/* Dashboard — two fixed grids with no responsive fallback. */
+.mepm-dash-split {
+  grid-template-columns: 1.5fr 1fr;
+}
+.mepm-dash-featured {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 1023px) {
+  .mepm-dash-split {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 767px) {
+  .mepm-dash-featured {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .mepm-dash-featured {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Two equal fields side by side — desktop only; stack below 640px. */
+.mepm-grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 639px) {
+  .mepm-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

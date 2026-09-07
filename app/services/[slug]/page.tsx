@@ -41,7 +41,7 @@ export default async function ServicePage({ params }: PageProps) {
     <>
       {/* Page hero — drawing sheet header */}
       <section className="bp-grid-light border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 pt-16 pb-20 grid gap-12 lg:grid-cols-[1fr_minmax(280px,360px)] lg:items-start">
+        <div className="max-w-7xl mx-auto px-6 pt-16 pb-20 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_minmax(280px,360px)] lg:items-start">
           <div>
             <Link
               href="/services"
@@ -172,7 +172,7 @@ export default async function ServicePage({ params }: PageProps) {
 
       {/* Deliverables — dark band */}
       <section className="bg-navy-900 bp-grid">
-        <div className="max-w-7xl mx-auto px-6 py-20 grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
           <Reveal>
             <h2 className="mepm-h2 text-white mb-5">What you receive</h2>
             <p className="text-white/72 leading-relaxed max-w-md">
@@ -202,7 +202,7 @@ export default async function ServicePage({ params }: PageProps) {
       </section>
 
       {/* Sustainability + related */}
-      <section className="max-w-7xl mx-auto px-6 py-20 grid gap-12 lg:grid-cols-[1fr_1fr]">
+      <section className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1fr]">
         <Reveal>
           <div className="bg-green-50 border border-green-200 rounded-lg p-8 h-full">
             <h2 className="mepm-h4 text-navy-700 mb-4">

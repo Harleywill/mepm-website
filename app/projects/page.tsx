@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import {
   disciplinesToArray,
   isProjectStatus,
+  imageUrl,
   PROJECT_STATUS_LABELS,
 } from '@/lib/projects';
+import Icon from '../components/ui/Icon';
 
 export const metadata: Metadata = {
   title: 'Projects — MEPM Building Services Consultants',
@@ -18,6 +21,7 @@ export default async function ProjectsPage() {
   const projects = await prisma.project.findMany({
     where: { published: true },
     orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    include: { images: { orderBy: { order: 'asc' } } },
   });
 
   return (
@@ -45,8 +49,8 @@ export default async function ProjectsPage() {
           </div>
         ) : (
           <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-            <div className="hidden border-b border-slate-200 px-5 py-3 text-slate-500 md:grid md:grid-cols-[88px_1fr_160px_120px_120px] md:gap-4">
-              {['Sheet', 'Project', 'Sector', 'Disciplines', 'Year'].map((h) => (
+            <div className="hidden border-b border-slate-200 px-5 py-3 text-slate-500 md:grid md:grid-cols-[96px_1fr_160px_120px_120px] md:gap-4">
+              {['Preview', 'Project', 'Sector', 'Disciplines', 'Year'].map((h) => (
                 <span
                   key={h}
                   className="font-mono text-[11px] uppercase tracking-[0.06em]"
@@ -55,36 +59,53 @@ export default async function ProjectsPage() {
                 </span>
               ))}
             </div>
-            {projects.map((p, i) => (
-              <Link
-                key={p.id}
-                href={`/projects/${p.slug}`}
-                className="grid grid-cols-1 gap-1 border-b border-slate-100 px-5 py-5 transition-colors last:border-0 hover:bg-slate-50 md:grid-cols-[88px_1fr_160px_120px_120px] md:items-center md:gap-4"
-              >
-                <span className="font-mono text-sm font-semibold text-green-700">
-                  PRJ-{String(i + 1).padStart(3, '0')}
-                </span>
-                <span>
-                  <span className="block font-body font-semibold text-navy-700">
-                    {p.title}
-                  </span>
-                  {p.location && (
-                    <span className="block text-sm text-slate-500">
-                      {p.location}
+            {projects.map((p) => {
+              const cover = p.images.find((img) => img.isCover) ?? p.images[0] ?? null;
+              return (
+                <Link
+                  key={p.id}
+                  href={`/projects/${p.slug}`}
+                  className="grid grid-cols-1 gap-3 border-b border-slate-100 px-5 py-5 transition-colors last:border-0 hover:bg-slate-50 md:grid-cols-[96px_1fr_160px_120px_120px] md:items-center md:gap-4"
+                >
+                  <div className="flex items-center gap-4 md:contents">
+                    <div className="relative h-16 w-16 flex-none overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+                      {cover ? (
+                        <Image
+                          src={imageUrl(cover.storedPath)}
+                          alt=""
+                          fill
+                          sizes="64px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-slate-300">
+                          <Icon name="Image" size={20} />
+                        </div>
+                      )}
+                    </div>
+                    <span>
+                      <span className="block font-body font-semibold text-navy-700">
+                        {p.title}
+                      </span>
+                      {p.location && (
+                        <span className="block text-sm text-slate-500">
+                          {p.location}
+                        </span>
+                      )}
                     </span>
-                  )}
-                </span>
-                <span className="text-sm text-slate-600">{p.sector || '—'}</span>
-                <span className="font-mono text-xs text-slate-500">
-                  {disciplinesToArray(p.disciplines).join(' · ') || '—'}
-                </span>
-                <span className="text-sm text-slate-600">
-                  {p.year || (isProjectStatus(p.status)
-                    ? PROJECT_STATUS_LABELS[p.status]
-                    : '')}
-                </span>
-              </Link>
-            ))}
+                  </div>
+                  <span className="text-sm text-slate-600">{p.sector || '—'}</span>
+                  <span className="font-mono text-xs text-slate-500">
+                    {disciplinesToArray(p.disciplines).join(' · ') || '—'}
+                  </span>
+                  <span className="text-sm text-slate-600">
+                    {p.year || (isProjectStatus(p.status)
+                      ? PROJECT_STATUS_LABELS[p.status]
+                      : '')}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>

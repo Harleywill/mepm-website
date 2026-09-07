@@ -224,7 +224,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Projects & Enquiries */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 20, alignItems: 'start' }}>
+      <div className="mepm-dash-split" style={{ display: 'grid', gap: 20, alignItems: 'start' }}>
         {/* Recently Updated */}
         <SectionCard
           title="Recently updated"
@@ -370,7 +370,7 @@ export default function DashboardPage() {
             </Link>
           }
         >
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+          <div className="mepm-dash-featured" style={{ display: 'grid', gap: 14 }}>
             {[0, 1, 2].map((i) => {
               const p = featured[i];
               if (!p) {

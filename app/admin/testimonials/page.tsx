@@ -68,7 +68,7 @@ export default function TestimonialsPage() {
 
   return (
     <div>
-      <div className="mb-8 flex items-end justify-between gap-4">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="mepm-h2 text-navy-700">Testimonials</h1>
           <p className="mepm-spec mt-1 text-slate-500">
@@ -88,7 +88,7 @@ export default function TestimonialsPage() {
           <span className="font-mono text-slate-400">Loading…</span>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: '16px' }}>
           {testimonials.map((t) => (
             <div
               key={t.id}
@@ -127,7 +127,7 @@ export default function TestimonialsPage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div>
                         <label className="mb-2 block text-sm font-medium text-navy-700">
                           Author

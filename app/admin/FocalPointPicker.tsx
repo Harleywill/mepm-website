@@ -91,7 +91,7 @@ export default function FocalPointPicker({ imageUrl, cropX, cropY, onChange, onC
         </button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <p className="mepm-spec mb-1.5 text-slate-400">Drag to reposition</p>
           <div

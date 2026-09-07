@@ -199,7 +199,7 @@ export default function SiteStatsPage() {
                   ) : null}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                <div className="mepm-grid-2" style={{ display: 'grid', gap: 12, marginBottom: 12 }}>
                   <div>
                     <label
                       style={{
@@ -258,7 +258,7 @@ export default function SiteStatsPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                <div className="mepm-grid-2" style={{ display: 'grid', gap: 12, marginBottom: 12 }}>
                   <div>
                     <label
                       style={{

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -44,6 +45,12 @@ const NAV_GROUPS = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  // Close the mobile drawer whenever the route changes.
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [pathname]);
 
   // The login page renders bare — no shell, no guard (else redirect loop).
   if (pathname === '/admin/login') {
@@ -80,22 +87,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <AdminGuard>
       <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--slate-50)' }}>
+        {/* Overlay — mobile only, closes the drawer */}
+        {mobileNavOpen && (
+          <div
+            className="mepm-admin-overlay"
+            onClick={() => setMobileNavOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
         {/* SIDEBAR */}
         <aside
+          className={`mepm-admin-sidebar${mobileNavOpen ? ' is-open' : ''}`}
           style={{
-            width: 252,
             flex: 'none',
             background: 'var(--navy-950)',
             color: '#fff',
             display: 'flex',
             flexDirection: 'column',
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
           }}
         >
           {/* Logo */}
-          <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Image
               src="/assets/mepm-logo-white.png"
               alt="MEPM"
@@ -104,6 +117,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               style={{ height: '32px', width: 'auto' }}
               priority
             />
+            <button
+              className="mepm-admin-hamburger"
+              onClick={() => setMobileNavOpen(false)}
+              aria-label="Close navigation"
+              style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, color: 'rgba(255,255,255,.72)' }}
+            >
+              <Icon name="X" size={20} />
+            </button>
           </div>
 
           {/* Navigation */}
@@ -237,6 +258,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
           {/* Header */}
           <header
+            className="mepm-admin-header"
             style={{
               flex: 'none',
               height: 64,
@@ -246,26 +268,38 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '0 36px',
+              gap: 12,
               position: 'sticky',
               top: 0,
               zIndex: 40,
             }}
           >
-            {/* Breadcrumbs */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '.06em', color: 'var(--slate-500)' }}>
-              {breadcrumbs.map((crumb, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  {idx > 0 && <Icon name="ChevronRight" size={14} style={{ color: 'var(--slate-300)' }} />}
-                  <span style={{ color: idx === 0 ? 'var(--navy-700)' : idx === breadcrumbs.length - 1 ? 'var(--slate-700)' : 'var(--slate-500)' }}>
-                    {crumb.label}
-                  </span>
-                </div>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+              {/* Hamburger — mobile only */}
+              <button
+                className="mepm-admin-hamburger"
+                onClick={() => setMobileNavOpen(true)}
+                aria-label="Open navigation"
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, flex: 'none', color: 'var(--navy-700)' }}
+              >
+                <Icon name="Menu" size={22} />
+              </button>
+
+              {/* Breadcrumbs */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '.06em', color: 'var(--slate-500)', minWidth: 0, overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                {breadcrumbs.map((crumb, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 'none' }}>
+                    {idx > 0 && <Icon name="ChevronRight" size={14} style={{ color: 'var(--slate-300)' }} />}
+                    <span style={{ color: idx === 0 ? 'var(--navy-700)' : idx === breadcrumbs.length - 1 ? 'var(--slate-700)' : 'var(--slate-500)' }}>
+                      {crumb.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Right side - View live site & Status */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="mepm-admin-header-extra" style={{ flex: 'none' }}>
               <a
                 href="/"
                 target="_blank"
@@ -319,7 +353,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </header>
 
           {/* Main Content */}
-          <main id="mepm-main" style={{ flex: 1, overflowY: 'auto', padding: '36px 36px 64px' }}>
+          <main id="mepm-main" className="mepm-admin-main" style={{ flex: 1, overflowY: 'auto' }}>
             <div style={{ maxWidth: 1140, margin: '0 auto' }}>{children}</div>
           </main>
         </div>

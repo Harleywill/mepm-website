@@ -29,13 +29,10 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div
-      className="min-h-screen grid gap-0"
-      style={{ gridTemplateColumns: '1.05fr .95fr' }}
-    >
+    <div className="min-h-screen grid grid-cols-1 gap-0 lg:grid-cols-[1.05fr_.95fr]">
       {/* Brand panel */}
       <div
-        className="relative overflow-hidden px-14 py-14 flex flex-col justify-between"
+        className="relative overflow-hidden px-6 py-10 sm:px-10 sm:py-12 lg:px-14 lg:py-14 flex flex-col justify-between gap-10 lg:gap-0"
         style={{
           background: 'var(--navy-950)',
           color: '#fff',
@@ -77,7 +74,7 @@ export default function AdminLoginPage() {
             Content Studio
           </div>
           <h1
-            className="mt-4.5 text-5xl font-800 leading-tight tracking-tight max-w-sm"
+            className="mt-4.5 text-3xl sm:text-4xl lg:text-5xl font-800 leading-tight tracking-tight max-w-sm"
             style={{ color: '#fff', margin: '18px 0 0' }}
           >
             The backend that runs{' '}
@@ -101,7 +98,7 @@ export default function AdminLoginPage() {
       </div>
 
       {/* Sign-in */}
-      <div className="flex items-center justify-center p-10">
+      <div className="flex items-center justify-center px-6 py-10 sm:p-10">
         <div className="w-full max-w-sm">
           <h2
             className="font-display text-3.5xl font-800 text-navy-800 m-0"

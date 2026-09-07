@@ -122,14 +122,20 @@ export default function AdminServicesPage() {
           <div className="mb-10 flex flex-col gap-4">
             <SortableList items={services} getId={(sv) => sv.id} onReorder={reorderServices}>
               {(sv, dragHandle) => (
-              <div className="flex items-start gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-xs">
+              <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-6 shadow-xs sm:flex-row sm:items-start sm:gap-4">
 
-                {dragHandle}
-                <div className="flex h-13 w-13 flex-none items-center justify-center rounded-md bg-navy-700 text-white">
-                  <Icon name={sv.icon as any} size={26} stroke={1.75} />
+                <div className="flex items-center gap-4">
+                  {dragHandle}
+                  <div className="flex h-13 w-13 flex-none items-center justify-center rounded-md bg-navy-700 text-white">
+                    <Icon name={sv.icon as any} size={26} stroke={1.75} />
+                  </div>
+                  <div className="flex items-baseline gap-3 sm:hidden">
+                    <span className="font-mono text-xs tracking-widest text-slate-400">{sv.code}</span>
+                    <h3 className="font-archivo text-xl font-bold text-navy-800">{sv.name}</h3>
+                  </div>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-3">
+                  <div className="hidden items-baseline gap-3 sm:flex">
                     <span className="font-mono text-xs tracking-widest text-slate-400">{sv.code}</span>
                     <h3 className="font-archivo text-xl font-bold text-navy-800">{sv.name}</h3>
                     <span
@@ -140,6 +146,13 @@ export default function AdminServicesPage() {
                       {sv.published ? 'Published' : 'Draft'}
                     </span>
                   </div>
+                  <span
+                    className={`mt-2 inline-flex rounded px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.06em] sm:hidden ${
+                      sv.published ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'
+                    }`}
+                  >
+                    {sv.published ? 'Published' : 'Draft'}
+                  </span>
                   <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-600">
                     {sv.shortDescription}
                   </p>
@@ -156,42 +169,44 @@ export default function AdminServicesPage() {
                     </div>
                   )}
                 </div>
-                {sv.statValue && (
-                  <div className="flex-none text-right">
-                    {sv.statLabel && (
-                      <div className="mb-0.5 font-mono text-[10px] tracking-wide text-slate-400">
-                        {sv.statLabel}
+                <div className="flex items-center justify-between gap-3 sm:flex-none sm:flex-col sm:items-end sm:justify-start sm:gap-2">
+                  {sv.statValue && (
+                    <div className="flex-none text-right">
+                      {sv.statLabel && (
+                        <div className="mb-0.5 font-mono text-[10px] tracking-wide text-slate-400">
+                          {sv.statLabel}
+                        </div>
+                      )}
+                      <div
+                        className="font-archivo text-2xl font-bold"
+                        style={{
+                          color: sv.statValue.includes('-')
+                            ? '#E74C3C'
+                            : sv.statValue === 'A'
+                              ? '#68B830'
+                              : 'var(--navy-800)',
+                        }}
+                      >
+                        {sv.statValue}
                       </div>
-                    )}
-                    <div
-                      className="font-archivo text-2xl font-bold"
-                      style={{
-                        color: sv.statValue.includes('-')
-                          ? '#E74C3C'
-                          : sv.statValue === 'A'
-                            ? '#68B830'
-                            : 'var(--navy-800)',
-                      }}
-                    >
-                      {sv.statValue}
                     </div>
+                  )}
+                  <div className="flex flex-none gap-1.5">
+                    <Link
+                      href={`/admin/services/${sv.id}/edit`}
+                      title="Edit"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-navy-50 hover:text-navy-700 transition-colors"
+                    >
+                      <Pencil size={14} />
+                    </Link>
+                    <button
+                      onClick={() => setDeleteConfirm({ kind: 'service', id: sv.id, name: sv.name })}
+                      title="Delete"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
-                )}
-                <div className="flex flex-none gap-1.5">
-                  <Link
-                    href={`/admin/services/${sv.id}/edit`}
-                    title="Edit"
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-navy-50 hover:text-navy-700 transition-colors"
-                  >
-                    <Pencil size={14} />
-                  </Link>
-                  <button
-                    onClick={() => setDeleteConfirm({ kind: 'service', id: sv.id, name: sv.name })}
-                    title="Delete"
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
-                  >
-                    <Trash2 size={14} />
-                  </button>
                 </div>
               </div>
               )}
