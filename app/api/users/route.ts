@@ -30,7 +30,7 @@ export async function GET() {
       role: true,
       createdAt: true,
     },
-    orderBy: [{ createdAt: 'desc' }],
+    orderBy: [{ createdAt: 'desc' }, { id: "asc" }],
   });
 
   return NextResponse.json({ users });

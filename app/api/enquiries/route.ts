@@ -121,7 +121,7 @@ export async function GET(req: Request) {
   const enquiries = await prisma.enquiry.findMany({
     where,
     include: { attachments: true },
-    orderBy: { createdAt: 'desc' },
+    orderBy: [{ createdAt: 'desc' }, { id: "asc" }],
   });
   return NextResponse.json({ enquiries });
 }

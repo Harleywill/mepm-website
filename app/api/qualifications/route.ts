@@ -9,7 +9,7 @@ import { revalidatePublicSite } from '@/lib/revalidate';
 export async function GET() {
   try {
     const qualifications = await prisma.qualification.findMany({
-      orderBy: { order: 'asc' },
+      orderBy: [{ order: 'asc' }, { id: "asc" }],
     });
     return NextResponse.json({ qualifications });
   } catch (error) {
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     });
 
     const qualifications = await prisma.qualification.findMany({
-      orderBy: { order: 'asc' },
+      orderBy: [{ order: 'asc' }, { id: "asc" }],
     });
 
     revalidatePublicSite();

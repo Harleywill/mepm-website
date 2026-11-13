@@ -11,7 +11,7 @@ import type { Role } from '@/lib/roles';
 /** Public list of all team members. */
 export async function GET(_req: Request) {
   const team = await prisma.team.findMany({
-    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
   });
   return NextResponse.json({ team });
 }

@@ -28,8 +28,8 @@ export async function GET(req: Request) {
 
   const projects = await prisma.project.findMany({
     where: wantAll && admin ? {} : { published: true },
-    include: { images: { orderBy: { order: 'asc' } } },
-    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
+    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
   });
   return NextResponse.json({ projects });
 }

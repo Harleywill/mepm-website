@@ -18,7 +18,7 @@ Create `.env` in the repo root on the server (it is gitignored — never commit
 it). Use strong production values:
 
 ```
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="postgresql://mepm:<password>@127.0.0.1:5432/mepm"   # Postgres, localhost only
 JWT_SECRET="<long random string, 32+ chars>"
 ADMIN_USERNAME="admin"
 ADMIN_PASSWORD="<strong password>"
@@ -68,7 +68,7 @@ builds, and restarts PM2.
 These live on the server's disk and hold real data. The deploy never touches
 them; keep them out of any cleanup and include them in backups:
 
-- `prisma/dev.db` — all enquiries and projects
+- the Postgres database `mepm` — all enquiries and projects (back it up with `pg_dump -Fc`, not by copying a file)
 - `uploads/enquiries/` — private enquiry attachments
 - `public/uploads/projects/` — project drawings/photos
 

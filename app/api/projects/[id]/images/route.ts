@@ -63,7 +63,7 @@ export async function POST(
 
   const updated = await prisma.project.findUnique({
     where: { id },
-    include: { images: { orderBy: { order: 'asc' } } },
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
   });
   if (files.length > 0) {
     revalidatePublicSite();

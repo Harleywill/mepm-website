@@ -27,7 +27,7 @@ export async function logLoginAttempt(entry: {
 export async function getRecentLoginAttempts(limit: number = 100): Promise<LoginAttemptDTO[]> {
   try {
     const rows = await prisma.loginAttempt.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ createdAt: 'desc' }, { id: "asc" }],
       take: limit,
     });
     return rows.map((row) => ({

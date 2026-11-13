@@ -26,7 +26,7 @@ export async function GET(
   const { id } = await params;
   const project = await prisma.project.findUnique({
     where: { id },
-    include: { images: { orderBy: { order: 'asc' } } },
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
   });
   if (!project) return NextResponse.json({ error: 'not found' }, { status: 404 });
   return NextResponse.json({ project });
@@ -69,7 +69,7 @@ export async function PATCH(
   const project = await prisma.project.update({
     where: { id },
     data,
-    include: { images: { orderBy: { order: 'asc' } } },
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
   });
   revalidatePublicSite();
   await logActivity({

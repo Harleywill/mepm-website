@@ -54,7 +54,7 @@ export async function PATCH(
 
   const project = await prisma.project.findUnique({
     where: { id },
-    include: { images: { orderBy: { order: 'asc' } } },
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
   });
   revalidatePublicSite();
   return NextResponse.json({ project });
@@ -88,7 +88,7 @@ export async function DELETE(
   if (image.isCover) {
     const next = await prisma.projectImage.findFirst({
       where: { projectId: id },
-      orderBy: { order: 'asc' },
+      orderBy: [{ order: 'asc' }, { id: "asc" }],
     });
     if (next)
       await prisma.projectImage.update({
@@ -99,7 +99,7 @@ export async function DELETE(
 
   const project = await prisma.project.findUnique({
     where: { id },
-    include: { images: { orderBy: { order: 'asc' } } },
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
   });
   revalidatePublicSite();
   await logActivity({

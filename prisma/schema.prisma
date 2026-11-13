@@ -1,5 +1,5 @@
 // MEPM admin backend — enquiries + projects
-// SQLite + Prisma, mirroring the NTS stack. See
+// Postgres + Prisma (moved from SQLite 2026-11; old schema kept as sqlite-source.prisma for the one-off copy). See
 // docs/superpowers/specs/2026-06-15-admin-backend-enquiries-projects-design.md
 
 generator client {
@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

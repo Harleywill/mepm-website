@@ -11,7 +11,7 @@ import type { Role } from '@/lib/roles';
 /** Public list of all testimonials. */
 export async function GET(_req: Request) {
   const testimonials = await prisma.testimonial.findMany({
-    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
   });
   return NextResponse.json({ testimonials });
 }

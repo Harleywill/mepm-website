@@ -7,8 +7,8 @@ import { Reveal } from '../ui';
 export default async function LatestProjects() {
   const projects = await prisma.project.findMany({
     where: { published: true, featured: true },
-    include: { images: { orderBy: { order: 'asc' } } },
-    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
+    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
     take: 3,
   });
 

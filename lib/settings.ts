@@ -60,8 +60,8 @@ export async function getSettings(): Promise<FullSettings> {
   try {
     [row, stats, qualifications] = await Promise.all([
       prisma.siteSettings.findUnique({ where: { id: 'main' } }),
-      prisma.stat.findMany({ orderBy: { order: 'asc' } }),
-      prisma.qualification.findMany({ orderBy: { order: 'asc' } }),
+      prisma.stat.findMany({ orderBy: [{ order: 'asc' }, { id: "asc" }] }),
+      prisma.qualification.findMany({ orderBy: [{ order: 'asc' }, { id: "asc" }] }),
     ]);
   } catch (error) {
     console.error('getSettings: database query failed', error);

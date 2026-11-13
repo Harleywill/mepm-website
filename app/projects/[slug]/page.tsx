@@ -20,7 +20,7 @@ interface PageProps {
 async function getProject(slug: string) {
   return prisma.project.findFirst({
     where: { slug, published: true },
-    include: { images: { orderBy: { order: 'asc' } } },
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
   });
 }
 

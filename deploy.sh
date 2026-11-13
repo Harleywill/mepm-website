@@ -2,7 +2,7 @@
 # MEPM website deploy — run on the VPS from the repo root.
 #
 # Non-destructive by design: it applies migrations but NEVER resets the
-# database or removes uploaded files. The SQLite DB (prisma/dev.db) and the
+# database or removes uploaded files. The Postgres database and the
 # upload folders (uploads/, public/uploads/) persist across deploys and hold
 # real enquiries and project drawings.
 set -euo pipefail

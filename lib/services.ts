@@ -129,7 +129,7 @@ export const getServices = cache(async (publishedOnly: boolean = false): Promise
   try {
     const rows = await prisma.service.findMany({
       where: publishedOnly ? { published: true } : undefined,
-      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }, { id: "asc" }],
     });
     return rows.map(toServiceDTO);
   } catch (error) {
@@ -154,7 +154,7 @@ export const getServiceBySlug = cache(async (slug: string, publishedOnly: boolea
 export const getServiceOfferings = cache(async (): Promise<ServiceOfferingDTO[]> => {
   try {
     const rows = await prisma.serviceOffering.findMany({
-      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }, { id: "asc" }],
     });
     return rows.map(toOfferingDTO);
   } catch (error) {

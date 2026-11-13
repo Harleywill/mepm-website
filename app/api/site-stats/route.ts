@@ -9,7 +9,7 @@ import { revalidatePublicSite } from '@/lib/revalidate';
 export async function GET() {
   try {
     const stats = await prisma.stat.findMany({
-      orderBy: { order: 'asc' },
+      orderBy: [{ order: 'asc' }, { id: "asc" }],
     });
     return NextResponse.json(stats);
   } catch (error) {

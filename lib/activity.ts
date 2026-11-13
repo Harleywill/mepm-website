@@ -33,7 +33,7 @@ export async function logActivity(entry: {
 export async function getRecentActivity(limit: number = 100): Promise<ActivityLogDTO[]> {
   try {
     const rows = await prisma.activityLog.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ createdAt: 'desc' }, { id: "asc" }],
       take: limit,
     });
     return rows.map((row) => ({

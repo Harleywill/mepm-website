@@ -50,3 +50,6 @@ next-env.d.ts
 # git worktrees
 .worktrees
 .superpowers
+
+# one-off SQLite->Postgres copy: generated read-only client (see scripts/migrate-sqlite-to-postgres.ts)
+/.sqlite-client

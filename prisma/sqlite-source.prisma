@@ -1,0 +1,204 @@
+// MEPM admin backend — enquiries + projects
+// SQLite + Prisma, mirroring the NTS stack. See
+// docs/superpowers/specs/2026-06-15-admin-backend-enquiries-projects-design.md
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../.sqlite-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("SQLITE_URL")
+}
+
+model Enquiry {
+  id           String       @id @default(cuid())
+  name         String
+  email        String
+  phone        String?
+  organisation String?
+  service      String?
+  message      String
+  status       String       @default("new") // new | read | replied | archived
+  createdAt    DateTime     @default(now())
+  attachments  Attachment[]
+}
+
+model Attachment {
+  id         String  @id @default(cuid())
+  enquiryId  String
+  enquiry    Enquiry @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  filename   String
+  storedPath String
+  mimeType   String
+  size       Int
+}
+
+model Project {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  title       String
+  client      String?
+  location    String?
+  sector      String?
+  disciplines String         @default("") // CSV of ELE|MEC|ENV
+  status      String         @default("complete") // planned | in_progress | complete
+  year        Int?
+  summary     String         @default("")
+  detail      String         @default("")
+  featured    Boolean        @default(false)
+  published   Boolean        @default(false)
+  order       Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  images      ProjectImage[]
+}
+
+model ProjectImage {
+  id         String  @id @default(cuid())
+  projectId  String
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  filename   String
+  storedPath String
+  mimeType   String
+  size       Int
+  caption    String?
+  isCover    Boolean @default(false)
+  order      Int     @default(0)
+  // Focal point (0-1, normalised) — controls object-position when this
+  // image is cropped to fill a fixed box, e.g. the homepage project card.
+  cropX      Float   @default(0.5)
+  cropY      Float   @default(0.5)
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("editor") // administrator | editor | viewer
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Single-row site settings (id is always "main").
+model SiteSettings {
+  id           String   @id @default("main")
+  phone        String   @default("")
+  email        String   @default("")
+  addressLine1 String   @default("")
+  addressLine2 String   @default("")
+  addressLine3 String   @default("")
+  facebook     String   @default("")
+  twitter      String   @default("")
+  instagram    String   @default("")
+  linkedin     String   @default("")
+  updatedAt    DateTime @updatedAt
+}
+
+// Editable count-up figures in the stat strip.
+model Stat {
+  id     String @id @default(cuid())
+  prefix String @default("")
+  value  Int    @default(0)
+  suffix String @default("")
+  label  String
+  order  Int    @default(0)
+}
+
+// Editable credentials/memberships shown in the stat strip band.
+model Qualification {
+  id    String @id @default(cuid())
+  label String
+  order Int    @default(0)
+}
+
+model Service {
+  id               String   @id @default(cuid())
+  slug             String   @unique // electrical | mechanical | environmental
+  code             String   @unique // ELE | MEC | ENV
+  name             String
+  navLabel         String
+  shortDescription String
+  intro            String
+  keywords         String   @default("[]") // JSON array of strings
+  scope            String   @default("[]") // JSON array of {title, description}
+  deliverables     String   @default("[]") // JSON array of strings
+  sustainability   String   @default("")
+  relatedSlugs     String   @default("[]") // JSON array of service slugs
+  statValue        String   @default("")
+  statLabel        String   @default("")
+  order            Int      @default(0)
+  published        Boolean  @default(true)
+  icon             String   @default("Zap") // lucide-react icon name
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ServiceOffering {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  shortDescription String
+  description      String
+  keywords         String   @default("[]") // JSON array of strings
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  quote     String
+  author    String   @unique
+  company   String?
+  logo      String?  // stored path (public/uploads/testimonials/…)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Team {
+  id         String   @id @default(cuid())
+  name       String   @unique
+  role       String   // e.g., "Senior MEP Engineer"
+  discipline String   // ELE | MEC | ENV
+  bio        String   @default("")
+  photo      String?  // stored path (public/uploads/team/…)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Accreditation {
+  id    String @id @default(cuid())
+  label String // e.g., "CIBSE", "ISO 9001"
+  order Int    @default(0)
+}
+
+// Append-only audit trail of admin content changes. Denormalized (username,
+// not a relation to AdminUser) so history survives the user account being deleted.
+model ActivityLog {
+  id          String   @id @default(cuid())
+  action      String   // create | update | delete
+  entityType  String   // Project | Service | Team | ...
+  entityId    String
+  entityLabel String
+  username    String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+/** Security audit trail for /api/auth/login — kept separate from
+ *  ActivityLog, which is scoped to content changes shown in the CMS
+ *  history feed. */
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  username  String // as submitted; may not correspond to a real account
+  success   Boolean
+  ipAddress String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

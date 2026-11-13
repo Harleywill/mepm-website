@@ -9,7 +9,7 @@ import type { Role } from '@/lib/roles';
 /** Public: list all accreditations. */
 export async function GET() {
   const accreditations = await prisma.accreditation.findMany({
-    orderBy: { order: 'asc' },
+    orderBy: [{ order: 'asc' }, { id: "asc" }],
   });
   return NextResponse.json(accreditations);
 }
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
   // Get max order
   const last = await prisma.accreditation.findFirst({
-    orderBy: { order: 'desc' },
+    orderBy: [{ order: 'desc' }, { id: "asc" }],
   });
   const order = (last?.order ?? -1) + 1;
 

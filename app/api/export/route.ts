@@ -41,34 +41,34 @@ export async function GET(_req: Request) {
       users,
     ] = await Promise.all([
       prisma.project.findMany({
-        include: { images: { orderBy: { order: 'asc' } } },
-        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+        include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
       }),
       prisma.enquiry.findMany({
         include: { attachments: true },
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { id: "asc" }],
       }),
       prisma.service.findMany({
-        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
       }),
       prisma.serviceOffering.findMany({
-        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
       }),
       prisma.team.findMany({
-        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
       }),
       prisma.testimonial.findMany({
-        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
       }),
       prisma.accreditation.findMany({
-        orderBy: { order: 'asc' },
+        orderBy: [{ order: 'asc' }, { id: "asc" }],
       }),
       prisma.stat.findMany({
-        orderBy: { order: 'asc' },
+        orderBy: [{ order: 'asc' }, { id: "asc" }],
       }),
       prisma.adminUser.findMany({
         select: { id: true, username: true, role: true },
-        orderBy: { createdAt: 'asc' },
+        orderBy: [{ createdAt: 'asc' }, { id: "asc" }],
       }),
     ]);
 

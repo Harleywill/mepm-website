@@ -20,8 +20,8 @@ export const metadata: Metadata = {
 export default async function ProjectsPage() {
   const projects = await prisma.project.findMany({
     where: { published: true },
-    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
-    include: { images: { orderBy: { order: 'asc' } } },
+    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }, { id: "asc" }],
+    include: { images: { orderBy: [{ order: 'asc' }, { id: "asc" }] } },
   });
 
   return (
